@@ -31,7 +31,7 @@ const Header = () => {
     <header className={cn(
       "fixed w-full z-50 transition-all duration-300",
       isScrolled 
-        ? "bg-white/95 shadow-md py-3" 
+        ? "bg-white/95 backdrop-blur-sm shadow-md py-3" 
         : "bg-transparent py-5"
     )}>
       <div className="container-custom px-6">

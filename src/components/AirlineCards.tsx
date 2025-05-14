@@ -56,7 +56,7 @@ const airlines = [
 
 const AirlineCard = ({ airline }: { airline: typeof airlines[0] }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 card-shadow overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 card-shadow overflow-hidden border border-gray-100 hover:border-gold/30 hover:-translate-y-1">
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="text-3xl">{airline.logo}</div>
@@ -64,7 +64,7 @@ const AirlineCard = ({ airline }: { airline: typeof airlines[0] }) => {
             Available
           </div>
         </div>
-        <h3 className="text-xl font-bold text-navy mb-2">{airline.name}</h3>
+        <h3 className="text-xl font-bold text-navy mb-2 font-playfair">{airline.name}</h3>
         <div className="mb-4">
           <span className="text-2xl font-bold text-gold">${airline.pricePerMile.toFixed(3)}</span>
           <span className="text-gray-500 text-sm"> per mile</span>
@@ -81,21 +81,28 @@ const AirlineCard = ({ airline }: { airline: typeof airlines[0] }) => {
         </div>
         <a 
           href="#quote" 
-          className="block text-center bg-navy hover:bg-navy-light text-white font-medium py-3 px-4 rounded-md transition-colors duration-200 w-full"
+          className="block text-center bg-navy hover:bg-navy-light text-white font-medium py-3 px-4 rounded-md transition-all duration-300 w-full hover:shadow-lg"
         >
           Get Quote
         </a>
       </div>
+      <div className="h-1 w-full bg-gradient-to-r from-gold/30 via-gold to-gold/30"></div>
     </div>
   );
 };
 
 const AirlineCards = () => {
   return (
-    <section id="airlines" className="section-padding bg-gray-50">
-      <div className="container-custom">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy">
+    <section id="airlines" className="section-padding bg-gray-50 relative overflow-hidden">
+      {/* Decorative Arabic-inspired pattern */}
+      <div className="absolute top-0 left-0 w-full h-full arabic-pattern opacity-5 z-0"></div>
+      
+      <div className="container-custom relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="mb-3">
+            <div className="inline-block rotate-45 text-gold">✦</div>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy font-playfair">
             Premium Airline <span className="text-gold">Miles</span>
           </h2>
           <p className="text-gray-600">
@@ -112,9 +119,9 @@ const AirlineCards = () => {
         <div className="mt-12 text-center">
           <a 
             href="#calculator" 
-            className="inline-flex items-center text-navy hover:text-gold font-medium transition-colors duration-200"
+            className="inline-flex items-center text-navy hover:text-gold font-medium transition-colors duration-200 group"
           >
-            Calculate your savings <ArrowRight size={16} className="ml-2" />
+            Calculate your savings <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>

@@ -3,10 +3,16 @@ import React from 'react';
 
 const AboutUs = () => {
   return (
-    <section id="about" className="section-padding">
-      <div className="container-custom">
+    <section id="about" className="section-padding bg-white relative overflow-hidden">
+      {/* Decorative pattern */}
+      <div className="absolute top-0 left-0 w-full h-full arabic-pattern opacity-5 z-0"></div>
+      
+      <div className="container-custom relative z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
+            <div className="mb-3">
+              <div className="inline-block text-gold">✦</div>
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy">
               About <span className="text-gold">Miles Market</span>
             </h2>
@@ -16,21 +22,21 @@ const AboutUs = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div>
-              <h3 className="text-xl font-semibold mb-4 text-navy">Our Story</h3>
-              <p className="text-gray-600 mb-6">
+            <div className="arabesque p-6">
+              <h3 className="text-xl font-semibold mb-4 text-navy font-playfair">Our Story</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 Miles Market was founded in Dubai with a simple mission: to make luxury travel accessible to more people through innovative solutions. 
                 We saw a gap in the market where travelers were paying full price for premium flights, unaware that there was a more affordable way.
               </p>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-relaxed">
                 Our team of travel industry experts has deep relationships with airlines and partners across the globe, allowing us to source miles ethically 
                 and pass the savings directly to you.
               </p>
             </div>
             
-            <div>
-              <h3 className="text-xl font-semibold mb-4 text-navy">Our Values</h3>
-              <div className="space-y-4">
+            <div className="arabesque p-6">
+              <h3 className="text-xl font-semibold mb-4 text-navy font-playfair">Our Values</h3>
+              <div className="space-y-6">
                 <div className="flex">
                   <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full bg-gold-light text-gold">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
@@ -70,13 +76,21 @@ const AboutUs = () => {
             </div>
           </div>
           
-          <div className="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-100">
-            <h3 className="text-xl font-semibold mb-2 text-navy">Halal-Compliant Business</h3>
-            <p className="text-gray-600">
+          <div className="mt-16 p-8 bg-gray-50 rounded-lg border border-gray-100 premium-shadow relative overflow-hidden">
+            <div className="absolute top-0 right-0 h-24 w-24 opacity-5">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50,10 L90,50 L50,90 L10,50 Z" fill="#D4AF37" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold mb-4 text-navy font-playfair">Halal-Compliant Business</h3>
+            <p className="text-gray-600 leading-relaxed">
               Miles Market operates in full compliance with Islamic financial principles. Our business model avoids interest-based 
               transactions and ensures transparency in all our dealings. We take pride in providing a service that respects and 
               adheres to the values of our community.
             </p>
+            <div className="mt-4 text-right text-xs text-gray-400">
+              <span className="inline-block arabic-text">حلال</span>
+            </div>
           </div>
         </div>
       </div>

@@ -5,15 +5,25 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="bg-navy text-white pt-12 pb-6">
-      <div className="container-custom px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-navy text-white pt-16 pb-8 relative overflow-hidden">
+      {/* Arabic-inspired pattern overlay */}
+      <div className="absolute inset-0 arabic-pattern opacity-10 z-0"></div>
+      
+      <div className="container-custom px-6 relative z-10">
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center mb-12">
+          <div className="h-[1px] flex-grow max-w-xs bg-gold opacity-30"></div>
+          <div className="px-4 text-gold">✦</div>
+          <div className="h-[1px] flex-grow max-w-xs bg-gold opacity-30"></div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <div className="flex items-center mb-4">
-              <span className="font-playfair text-2xl font-bold text-white">Miles</span>
-              <span className="font-playfair text-2xl font-bold text-gold">Market</span>
+            <div className="flex items-center mb-6">
+              <span className="font-playfair text-3xl font-bold text-white">Miles</span>
+              <span className="font-playfair text-3xl font-bold text-gold">Market</span>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-300 mb-6 leading-relaxed">
               Elevate your journey without the hefty price tag. Experience first-class travel for a fraction of the cost.
             </p>
             <div className="flex space-x-4">
@@ -39,19 +49,19 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-gold">Quick Links</h3>
-            <ul className="space-y-2">
-              <li><a href="#airlines" className="text-gray-300 hover:text-gold transition-colors duration-200">Airlines</a></li>
-              <li><a href="#calculator" className="text-gray-300 hover:text-gold transition-colors duration-200">Calculator</a></li>
-              <li><a href="#testimonials" className="text-gray-300 hover:text-gold transition-colors duration-200">Testimonials</a></li>
-              <li><a href="#about" className="text-gray-300 hover:text-gold transition-colors duration-200">About Us</a></li>
-              <li><a href="#quote" className="text-gray-300 hover:text-gold transition-colors duration-200">Get a Quote</a></li>
+            <h3 className="text-lg font-semibold mb-4 text-gold font-playfair">Quick Links</h3>
+            <ul className="space-y-3">
+              <li><a href="#airlines" className="text-gray-300 hover:text-gold transition-colors duration-200 flex items-center"><span className="text-gold mr-2">•</span>Airlines</a></li>
+              <li><a href="#calculator" className="text-gray-300 hover:text-gold transition-colors duration-200 flex items-center"><span className="text-gold mr-2">•</span>Calculator</a></li>
+              <li><a href="#testimonials" className="text-gray-300 hover:text-gold transition-colors duration-200 flex items-center"><span className="text-gold mr-2">•</span>Testimonials</a></li>
+              <li><a href="#about" className="text-gray-300 hover:text-gold transition-colors duration-200 flex items-center"><span className="text-gold mr-2">•</span>About Us</a></li>
+              <li><a href="#quote" className="text-gray-300 hover:text-gold transition-colors duration-200 flex items-center"><span className="text-gold mr-2">•</span>Get a Quote</a></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-gold">Contact Us</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-semibold mb-4 text-gold font-playfair">Contact Us</h3>
+            <ul className="space-y-3">
               <li className="flex items-start">
                 <span className="text-gold mr-2">📍</span>
                 <span className="text-gray-300">Dubai Marina, UAE</span>
@@ -68,9 +78,9 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="mt-12 pt-6 border-t border-gray-800">
+        <div className="mt-16 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
+            <div className="text-gray-400 text-sm mb-6 md:mb-0">
               &copy; {currentYear} Miles Market. All rights reserved.
             </div>
             <div className="flex space-x-6">
