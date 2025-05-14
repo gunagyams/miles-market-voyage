@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Button } from './ui/button';
 
 // Sample data for airline cards
 const airlines = [
@@ -60,7 +61,7 @@ const AirlineCard = ({ airline }: { airline: typeof airlines[0] }) => {
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="text-3xl">{airline.logo}</div>
-          <div className="bg-gold-light text-navy-dark text-xs font-bold px-3 py-1 rounded-full">
+          <div className="bg-green-light text-white text-xs font-bold px-3 py-1 rounded-full">
             Available
           </div>
         </div>
@@ -79,12 +80,12 @@ const AirlineCard = ({ airline }: { airline: typeof airlines[0] }) => {
             <span className="font-medium">{airline.deliveryEstimate}</span>
           </div>
         </div>
-        <a 
-          href="#quote" 
-          className="block text-center bg-navy hover:bg-navy-light text-white font-medium py-3 px-4 rounded-md transition-colors duration-200 w-full"
+        <Button 
+          className="w-full bg-red hover:bg-red-dark text-white"
+          asChild
         >
-          Get Quote
-        </a>
+          <a href="#quote">Get Quote</a>
+        </Button>
       </div>
     </div>
   );
@@ -112,7 +113,7 @@ const AirlineCards = () => {
         <div className="mt-12 text-center">
           <a 
             href="#calculator" 
-            className="inline-flex items-center text-navy hover:text-gold font-medium transition-colors duration-200"
+            className="inline-flex items-center text-red hover:text-red-dark font-medium transition-colors duration-200"
           >
             Calculate your savings <ArrowRight size={16} className="ml-2" />
           </a>
