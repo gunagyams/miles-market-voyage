@@ -46,11 +46,11 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] }) => {
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md card-shadow border border-gray-100 hover:border-gold/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl arabesque">
+    <div className="bg-white p-6 rounded-lg shadow-md card-shadow border border-gray-100">
       <StarRating rating={testimonial.stars} />
-      <p className="mt-6 text-gray-600 italic leading-relaxed font-light">"{testimonial.quote}"</p>
-      <div className="mt-8 pt-6 border-t border-gray-100">
-        <p className="font-semibold text-navy font-playfair">{testimonial.name}</p>
+      <p className="mt-4 text-gray-600 italic">"{testimonial.quote}"</p>
+      <div className="mt-6">
+        <p className="font-semibold text-navy">{testimonial.name}</p>
         <p className="text-sm text-gray-500">{testimonial.location}</p>
       </div>
     </div>
@@ -59,14 +59,9 @@ const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] 
 
 const Testimonials = () => {
   return (
-    <section id="testimonials" className="section-padding bg-gray-50 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full arabic-pattern opacity-5 z-0"></div>
-      
-      <div className="container-custom relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="mb-3">
-            <div className="inline-block text-gold">✦</div>
-          </div>
+    <section id="testimonials" className="section-padding bg-gray-50">
+      <div className="container-custom">
+        <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy">
             Trusted by <span className="text-gold">Travelers</span>
           </h2>
@@ -75,17 +70,15 @@ const Testimonials = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>
         
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center bg-white py-4 px-8 rounded-full shadow-md premium-shadow">
-            <span className="mr-2 text-gold">✦</span>
+        <div className="mt-10 text-center">
+          <div className="inline-flex items-center bg-white py-3 px-6 rounded-full shadow-md">
             <span className="text-navy font-medium">Trusted by 5,000+ GCC travelers</span>
-            <span className="ml-2 text-gold">✦</span>
           </div>
         </div>
       </div>
