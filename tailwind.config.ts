@@ -65,8 +65,8 @@ export default {
         },
       },
       fontFamily: {
-        playfair: ["Playfair Display", "serif"],
-        inter: ["Inter", "sans-serif"],
+        instrument: ["Instrument Serif", "serif"],
+        jakarta: ["Plus Jakarta Sans", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
