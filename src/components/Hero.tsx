@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
 
 const Hero = () => {
   return (
@@ -28,21 +27,18 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button 
-              className="bg-red hover:bg-red-dark text-white py-3 px-8 rounded-md transition-colors duration-200"
-              asChild
-              size="lg"
+            <a 
+              href="#airlines" 
+              className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
             >
-              <a href="#airlines">Browse Miles Deals</a>  
-            </Button>
-            <Button 
-              className="bg-transparent hover:bg-white/10 border border-white text-white py-3 px-8 rounded-md transition-colors duration-200"
-              asChild
-              variant="outline"
-              size="lg"
+              Browse Miles Deals
+            </a>
+            <a 
+              href="#quote" 
+              className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
             >
-              <a href="#quote">Get a Free Quote</a>
-            </Button>
+              Get a Free Quote
+            </a>
           </div>
           
           <div className="mt-12 flex justify-center">
