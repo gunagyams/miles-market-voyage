@@ -1,3 +1,4 @@
+
 import React from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -9,6 +10,8 @@ import QuoteForm from "@/components/QuoteForm";
 import Footer from "@/components/Footer";
 import Overlap from "@/components/Overlap";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import VisualStory from "@/components/VisualStory";
+import WhyBuyMiles from "@/components/WhyBuyMiles";
 
 const Index = () => {
   return (
@@ -16,7 +19,9 @@ const Index = () => {
       <Header />
       <Hero />
       <Overlap />
+      <VisualStory />
       <AirlineCards />
+      <WhyBuyMiles />
       <MilesCalculator />
       <Testimonials />
       <AboutUs />
