@@ -27,6 +27,7 @@ const FloatingWhatsApp = () => {
       aria-label="Contact us on WhatsApp"
     >
       <MessageSquare className="h-6 w-6" />
+      <span className="sr-only">+971 52 958 1786</span>
     </a>
   );
 };

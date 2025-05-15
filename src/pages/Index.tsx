@@ -12,6 +12,7 @@ import Overlap from "@/components/Overlap";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import VisualStory from "@/components/VisualStory";
 import WhyBuyMiles from "@/components/WhyBuyMiles";
+import PaymentOptions from "@/components/PaymentOptions";
 
 const Index = () => {
   return (
@@ -23,6 +24,7 @@ const Index = () => {
       <AirlineCards />
       <WhyBuyMiles />
       <MilesCalculator />
+      <PaymentOptions />
       <Testimonials />
       <AboutUs />
       <QuoteForm />

@@ -17,15 +17,18 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo (Left aligned) */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center p-0">
+            <Link to="/" className="flex items-center p-0">
               <div className="flex items-center py-3">
-                <img
-                  src="/img/CMP.png"
-                  className="w-[100px] h-auto max-h-[60px]"
-                  alt="Company Logo"
-                />
+                <div className="flex flex-col items-start">
+                  <span className="text-xl md:text-2xl font-bold text-navy font-gilda">
+                    Cash <span className="text-gold">My Points</span>
+                  </span>
+                  <span className="text-[10px] md:text-xs text-gray-500 -mt-1">
+                    Premium Airline Miles Marketplace
+                  </span>
+                </div>
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu Button (Right) */}
@@ -94,6 +97,18 @@ const Header = () => {
             >
               <X size={24} />
             </button>
+
+            {/* Mobile brand logo */}
+            <div className="w-full flex justify-center mb-4 mt-6">
+              <div className="flex flex-col items-center">
+                <span className="text-xl font-bold text-navy font-gilda">
+                  Cash <span className="text-gold">My Points</span>
+                </span>
+                <span className="text-xs text-gray-500">
+                  Premium Airline Miles
+                </span>
+              </div>
+            </div>
 
             <div className="flex flex-col items-end w-full">
               <a
