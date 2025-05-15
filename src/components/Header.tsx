@@ -3,6 +3,12 @@ import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink
+} from "@/components/ui/navigation-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,28 +26,8 @@ const Header = () => {
       
       <div className="container-custom px-6 relative md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo (Center aligned) */}
-          <div className="flex-1 flex md:hidden"></div> {/* Spacer for mobile */}
-          
-          <div className="flex items-center justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
-            <Link to="/" className="flex items-center p-0">
-              <span className="font-jakarta text-2xl md:text-3xl font-bold tracking-tighter">
-                CASH<span className="text-gold">MY</span>POINTS
-              </span>
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button (Left) */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden text-navy hover:text-gold transition-colors duration-200"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
-          {/* Desktop Navigation (Hidden on Mobile) */}
-          <nav className="hidden md:flex items-center space-x-8 flex-1 justify-end">
+          {/* Left Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
             <a
               href="#airlines"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
@@ -54,18 +40,43 @@ const Header = () => {
             >
               Calculator
             </a>
-            <a
-              href="#testimonials"
-              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
-            >
-              Testimonials
-            </a>
             <Link
               to="/reviews"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Reviews
             </Link>
+          </nav>
+          
+          {/* Logo (Center aligned) */}
+          <div className="flex flex-col items-center justify-center">
+            <Link to="/" className="flex items-center p-0">
+              <span className="font-jakarta text-2xl md:text-3xl font-bold tracking-tighter text-navy">
+                CASH<span className="text-gold">MY</span>POINTS
+              </span>
+            </Link>
+            <span className="hidden md:block text-[11px] text-gray-500 font-jakarta -mt-1">
+              Premium Airline Miles Marketplace
+            </span>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-navy hover:text-gold transition-colors duration-200"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          {/* Right Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <a
+              href="#testimonials"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
+            >
+              Testimonials
+            </a>
             <a
               href="#about"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
@@ -101,7 +112,7 @@ const Header = () => {
             {/* Mobile brand logo */}
             <div className="w-full flex justify-center mb-4 mt-6">
               <div className="flex flex-col items-center">
-                <span className="font-jakarta text-2xl font-bold tracking-tighter">
+                <span className="font-jakarta text-2xl font-bold tracking-tighter text-navy">
                   CASH<span className="text-gold">MY</span>POINTS
                 </span>
                 <span className="text-xs text-gray-500 font-jakarta">

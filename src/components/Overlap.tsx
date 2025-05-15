@@ -16,14 +16,14 @@ export default function ThreeStepsProcess() {
       
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
         {/* Step 1 */}
-        <div className="step-card group">
+        <div className="step-card group rounded-xl">
           <div className="mb-4 overflow-hidden rounded-lg h-[160px] relative">
             <img 
               src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80" 
               alt="Browse Deals" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3 rounded-lg">
               <h3 className="text-lg font-medium text-white mb-1">Step 1</h3>
             </div>
           </div>
@@ -34,14 +34,14 @@ export default function ThreeStepsProcess() {
         </div>
         
         {/* Step 2 */}
-        <div className="step-card group">
+        <div className="step-card group rounded-xl">
           <div className="mb-4 overflow-hidden rounded-lg h-[160px] relative">
             <img 
               src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80" 
               alt="Calculate Your Cost" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3 rounded-lg">
               <h3 className="text-lg font-medium text-white mb-1">Step 2</h3>
             </div>
           </div>
@@ -52,14 +52,14 @@ export default function ThreeStepsProcess() {
         </div>
 
         {/* Step 3 */}
-        <div className="step-card group">
+        <div className="step-card group rounded-xl">
           <div className="mb-4 overflow-hidden rounded-lg h-[160px] relative">
             <img 
               src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80" 
               alt="Place Your Order" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-lg"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent flex items-end p-3 rounded-lg">
               <h3 className="text-lg font-medium text-white mb-1">Step 3</h3>
             </div>
           </div>

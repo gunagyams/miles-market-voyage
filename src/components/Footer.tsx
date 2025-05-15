@@ -15,6 +15,7 @@ const Footer = () => {
                 <img
                   src="/img/CMP.png"
                   className="w-[100px] h-auto max-h-[60px]"
+                  alt="Cash My Points Logo"
                 />
               </div>
             </div>
@@ -137,7 +138,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-start">
                 <span className="text-gold mr-2">📍</span>
-                <span className="text-gray-300">Dubai Marina, UAE</span>
+                <span className="text-gray-300">Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE</span>
               </li>
               <li className="flex items-start">
                 <span className="text-gold mr-2">📱</span>
