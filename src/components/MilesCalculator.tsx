@@ -49,7 +49,7 @@ const MilesCalculator = () => {
   };
 
   return (
-    <section id="calculator" className="relative overflow-hidden p-18">
+    <section id="calculator" className="relative overflow-hidden pt-12 pb-2">
       <div className="absolute inset-0 arabic-pattern opacity-10 z-0"></div>
 
       <div className="container-custom relative z-10">
