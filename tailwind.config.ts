@@ -65,7 +65,7 @@ export default {
         },
       },
       fontFamily: {
-        instrument: ["Instrument Serif", "serif"],
+        gilda: ["Gilda Display", "serif"],
         jakarta: ["Plus Jakarta Sans", "sans-serif"],
       },
       borderRadius: {

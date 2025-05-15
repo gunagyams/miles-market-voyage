@@ -1,5 +1,7 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
+import { ShieldCheck, Award, Star } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -12,14 +14,14 @@ const Hero = () => {
             <div className={cn("h-1 w-16 mx-auto bg-gold")}></div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight font-gilda">
             <span className="block">Buy Miles.</span>
             <span className="block">Book Luxury. Fly For Less.</span>
           </h1>
 
-          <p className="text-xl md:text-2xl mb-10 text-gray-100">
+          <p className="text-xl md:text-2xl mb-10 text-gray-100 font-jakarta">
             Get the points you need and the seat you want — for a fraction of
-            the price. The world’s most trusted and secure platform for buying
+            the price. The world's most trusted and secure platform for buying
             real airline miles.
           </p>
 
@@ -38,53 +40,49 @@ const Hero = () => {
             </a>
           </div>
 
-          <div className="mt-12 flex justify-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 inline-flex items-center">
-              <p className="text-sm font-medium">
-                <div className="flex flex-col items-center gap-4 text-sm text-gray-200">
-                  {/* Avatar Stack */}
-                  <div className="flex -space-x-3">
-                    <img
-                      src="/img/img1.jpg"
-                      alt="User 1"
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                    />
-                    <img
-                      src="/img/img2.jpg"
-                      alt="User 2"
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                    />
-                    <img
-                      src="/img/img3.jpg"
-                      alt="User 3"
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                    />
-                    <img
-                      src="/img/img4.jpg"
-                      alt="User 4"
-                      className="w-10 h-10 rounded-full border-2 border-white"
-                    />
+          <div className="mt-12">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                {/* Trust Metrics */}
+                <div className="flex items-center gap-3">
+                  <div className="bg-gold/20 p-3 rounded-full">
+                    <ShieldCheck className="w-6 h-6 text-gold" />
                   </div>
-
-                  {/* Trust Text + Trustpilot Badge */}
-                  <div className="flex flex-col sm:flex-row items-center gap-2">
-                    <p className="text-sm text-white text-center">
-                      Trusted by 5,000+ travelers worldwide · Rated Excellent on
-                    </p>
-                    <a
-                      href="https://www.trustpilot.com/review/yourdomain.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                  <div className="text-left">
+                    <p className="font-bold text-white">100% Secure</p>
+                    <p className="text-sm text-gray-200">Verified transactions</p>
+                  </div>
+                </div>
+                
+                {/* Customer Reviews */}
+                <div className="flex items-center gap-3">
+                  <div className="bg-gold/20 p-3 rounded-full">
+                    <Star className="w-6 h-6 text-gold" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold text-white">4.9/5 Rating</p>
+                    <p className="text-sm text-gray-200">From 5,000+ reviews</p>
+                  </div>
+                </div>
+                
+                {/* Awards */}
+                <div className="flex items-center gap-3">
+                  <div className="bg-gold/20 p-3 rounded-full">
+                    <Award className="w-6 h-6 text-gold" />
+                  </div>
+                  <div className="text-left">
+                    <div className="flex items-center">
+                      <p className="font-bold text-white mr-2">Excellent on</p>
                       <img
                         src="https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg"
                         alt="Trustpilot"
-                        className="h-6"
+                        className="h-5"
                       />
-                    </a>
+                    </div>
+                    <p className="text-sm text-gray-200">Award winning service</p>
                   </div>
                 </div>
-              </p>
+              </div>
             </div>
           </div>
         </div>
