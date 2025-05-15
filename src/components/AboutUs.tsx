@@ -125,7 +125,7 @@ const AboutUs = () => {
           </div>
           <div className="flex items-center justify-center m-5">
             <img
-              src="https://images.unsplash.com/photo-1612832164313-ac0d7e07b5ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              src="https://images.pexels.com/photos/5778706/pexels-photo-5778706.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
               alt="Halal Compliance"
               className="w-full h-auto"
               style={{ borderRadius: "8px" }}
