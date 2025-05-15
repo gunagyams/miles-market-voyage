@@ -6,11 +6,15 @@ const VisualStory = () => {
     <section className="section-padding bg-[#fefbf3]">
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="relative overflow-hidden rounded-xl aspect-[4/3] lg:aspect-square">
+          <div
+            className="relative overflow-hidden rounded-xl flex items-center justify-center bg-white"
+            style={{ maxWidth: 600, maxHeight: 450, margin: "0 auto" }}
+          >
             <img
               src="https://images.unsplash.com/photo-1661954864180-e61dea14208a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Luxury Travel Experience"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
+              style={{ maxWidth: "100%", maxHeight: "100%" }}
             />
             <div className="absolute inset-0 bg-gradient-to-br from-navy/30 to-transparent"></div>
           </div>
