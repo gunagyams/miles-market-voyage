@@ -7,8 +7,8 @@ const AboutUs = () => {
       <div className="container-custom">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy">
-              About <span className="text-gold">Miles Market</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy font-gilda">
+              About <span className="text-gold">Cash My Points</span>
             </h2>
             <p className="text-gray-600">
               We're revolutionizing the way travelers access premium flight experiences through ethical miles acquisition.
@@ -17,9 +17,9 @@ const AboutUs = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-navy">Our Story</h3>
+              <h3 className="text-xl font-semibold mb-4 text-navy font-gilda">Our Story</h3>
               <p className="text-gray-600 mb-6">
-                Miles Market was founded in Dubai with a simple mission: to make luxury travel accessible to more people through innovative solutions. 
+                Cash My Points was founded in Dubai with a simple mission: to make luxury travel accessible to more people through innovative solutions. 
                 We saw a gap in the market where travelers were paying full price for premium flights, unaware that there was a more affordable way.
               </p>
               <p className="text-gray-600">
@@ -29,7 +29,7 @@ const AboutUs = () => {
             </div>
             
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-navy">Our Values</h3>
+              <h3 className="text-xl font-semibold mb-4 text-navy font-gilda">Our Values</h3>
               <div className="space-y-4">
                 <div className="flex">
                   <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-full bg-gold-light text-gold">
@@ -71,9 +71,9 @@ const AboutUs = () => {
           </div>
           
           <div className="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-100">
-            <h3 className="text-xl font-semibold mb-2 text-navy">Halal-Compliant Business</h3>
+            <h3 className="text-xl font-semibold mb-2 text-navy font-gilda">Halal-Compliant Business</h3>
             <p className="text-gray-600">
-              Miles Market operates in full compliance with Islamic financial principles. Our business model avoids interest-based 
+              Cash My Points operates in full compliance with Islamic financial principles. Our business model avoids interest-based 
               transactions and ensures transparency in all our dealings. We take pride in providing a service that respects and 
               adheres to the values of our community.
             </p>

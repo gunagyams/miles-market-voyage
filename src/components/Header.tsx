@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,6 +57,12 @@ const Header = () => {
             >
               Testimonials
             </a>
+            <Link
+              to="/reviews"
+              className="text-navy hover:text-gold transition-colors duration-200"
+            >
+              Reviews
+            </Link>
             <a
               href="#about"
               className="text-navy hover:text-gold transition-colors duration-200"
@@ -110,6 +117,13 @@ const Header = () => {
               >
                 Testimonials
               </a>
+              <Link
+                to="/reviews"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                onClick={toggleMenu}
+              >
+                Reviews
+              </Link>
               <a
                 href="#about"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2"

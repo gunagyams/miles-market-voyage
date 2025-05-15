@@ -1,4 +1,6 @@
+
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -75,7 +77,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-gold">
+            <h3 className="text-lg font-semibold mb-4 text-gold font-gilda">
               Quick Links
             </h3>
             <ul className="space-y-2">
@@ -104,6 +106,14 @@ const Footer = () => {
                 </a>
               </li>
               <li>
+                <Link
+                  to="/reviews"
+                  className="text-gray-300 hover:text-gold transition-colors duration-200"
+                >
+                  Reviews
+                </Link>
+              </li>
+              <li>
                 <a
                   href="#about"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
@@ -123,7 +133,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-gold">Contact Us</h3>
+            <h3 className="text-lg font-semibold mb-4 text-gold font-gilda">Contact Us</h3>
             <ul className="space-y-2">
               <li className="flex items-start">
                 <span className="text-gold mr-2">📍</span>
@@ -141,10 +151,10 @@ const Footer = () => {
               <li className="flex items-start">
                 <span className="text-gold mr-2">✉️</span>
                 <a
-                  href="mailto:info@milesmarket.com"
+                  href="mailto:info@cashmypoint.com"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
-                  info@milesmarket.com
+                  info@cashmypoint.com
                 </a>
               </li>
             </ul>
@@ -154,7 +164,7 @@ const Footer = () => {
         <div className="mt-12 pt-6 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              &copy; {currentYear} Miles Market. All rights reserved.
+              &copy; {currentYear} Cash My Points. All rights reserved.
             </div>
             <div className="flex space-x-6">
               <a
