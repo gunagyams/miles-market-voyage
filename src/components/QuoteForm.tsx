@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Confetti } from "lucide-react";
+import { PartyPopper } from "lucide-react";
 import { 
   Form,
   FormControl,
@@ -255,7 +255,7 @@ const QuoteForm = () => {
           <DialogHeader>
             <DialogTitle className="text-center flex flex-col items-center gap-2">
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
-                <Confetti className="h-6 w-6 text-green-600" />
+                <PartyPopper className="h-6 w-6 text-green-600" />
               </div>
               <span className="text-xl font-bold">Order Requested Successfully!</span>
             </DialogTitle>
