@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,12 +14,9 @@ const Header = () => {
     <header className="fixed w-full bg-white bg-opacity-95 z-50 shadow-sm">
       <div className="container-custom px-6 relative md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Spacer for Mobile (to keep logo centered) */}
-          <div className="hidden md:block w-8" />
-
-          {/* Logo (Centered on Mobile) */}
-          <div className="flex justify-center flex-grow md:flex-grow-0">
-            <a href="/" className="flex items-center p-0 m-0">
+          {/* Logo (Left aligned) */}
+          <div className="flex items-center">
+            <a href="/" className="flex items-center p-0">
               <div className="flex items-center py-3">
                 <img
                   src="/img/CMP.png"

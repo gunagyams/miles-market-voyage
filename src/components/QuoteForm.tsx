@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
@@ -251,17 +251,17 @@ const QuoteForm = () => {
 
       {/* Success Dialog */}
       <Dialog open={isSuccess} onOpenChange={setIsSuccess}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle className="text-center flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
-                <PartyPopper className="h-6 w-6 text-green-600" />
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                <PartyPopper className="h-8 w-8 text-green-600" />
               </div>
-              <span className="text-xl font-bold">Order Requested Successfully!</span>
+              <span className="text-xl font-bold font-gilda">Order Requested Successfully!</span>
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
-            <p className="mb-4">
+            <p className="mb-6 text-gray-700">
               Thank you for your purchase request. A member of our team will contact you within the next 
               <span className="font-bold"> 2 hours </span> 
               to complete your order.
@@ -280,7 +280,7 @@ const QuoteForm = () => {
               ))}
             </div>
             <Button 
-              className="mt-4 bg-gold hover:bg-gold-dark" 
+              className="mt-4 bg-gold hover:bg-gold-dark font-jakarta" 
               onClick={() => setIsSuccess(false)}
             >
               Close
