@@ -13,68 +13,68 @@ const Header = () => {
 
   return (
     <header className="fixed w-full bg-white bg-opacity-95 z-50 shadow-sm">
+      {/* Announcement bar */}
+      <div className="bg-navy py-2 text-center text-white text-xs hidden md:block">
+        <p className="font-jakarta">Premium Airline Miles Marketplace • Save Up To 70% On Luxury Flight Tickets</p>
+      </div>
+      
       <div className="container-custom px-6 relative md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo (Left aligned) */}
-          <div className="flex items-center">
+          {/* Logo (Center aligned) */}
+          <div className="flex-1 flex md:hidden"></div> {/* Spacer for mobile */}
+          
+          <div className="flex items-center justify-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
             <Link to="/" className="flex items-center p-0">
-              <div className="flex items-center py-3">
-                <div className="flex flex-col items-start">
-                  <span className="text-xl md:text-2xl font-bold text-navy font-gilda">
-                    Cash <span className="text-gold">My Points</span>
-                  </span>
-                  <span className="text-[10px] md:text-xs text-gray-500 -mt-1">
-                    Premium Airline Miles Marketplace
-                  </span>
-                </div>
-              </div>
+              <span className="font-jakarta text-2xl md:text-3xl font-bold tracking-tighter">
+                CASH<span className="text-gold">MY</span>POINTS
+              </span>
             </Link>
           </div>
 
-          {/* Mobile Menu Button (Right) */}
+          {/* Mobile Menu Button (Left) */}
           <button
             onClick={toggleMenu}
-            className="md:hidden text-navy hover:text-gold transition-colors duration-200 z-10"
+            className="md:hidden text-navy hover:text-gold transition-colors duration-200"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
           {/* Desktop Navigation (Hidden on Mobile) */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-8 flex-1 justify-end">
             <a
               href="#airlines"
-              className="text-navy hover:text-gold transition-colors duration-200"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Airlines
             </a>
             <a
               href="#calculator"
-              className="text-navy hover:text-gold transition-colors duration-200"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Calculator
             </a>
             <a
               href="#testimonials"
-              className="text-navy hover:text-gold transition-colors duration-200"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Testimonials
             </a>
             <Link
               to="/reviews"
-              className="text-navy hover:text-gold transition-colors duration-200"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Reviews
             </Link>
             <a
               href="#about"
-              className="text-navy hover:text-gold transition-colors duration-200"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               About Us
             </a>
             <a
               href="#quote"
-              className="bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200"
+              className="bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Get a Quote
             </a>
@@ -101,10 +101,10 @@ const Header = () => {
             {/* Mobile brand logo */}
             <div className="w-full flex justify-center mb-4 mt-6">
               <div className="flex flex-col items-center">
-                <span className="text-xl font-bold text-navy font-gilda">
-                  Cash <span className="text-gold">My Points</span>
+                <span className="font-jakarta text-2xl font-bold tracking-tighter">
+                  CASH<span className="text-gold">MY</span>POINTS
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 font-jakarta">
                   Premium Airline Miles
                 </span>
               </div>
@@ -113,42 +113,42 @@ const Header = () => {
             <div className="flex flex-col items-end w-full">
               <a
                 href="#airlines"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Airlines
               </a>
               <a
                 href="#calculator"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Calculator
               </a>
               <a
                 href="#testimonials"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Testimonials
               </a>
               <Link
                 to="/reviews"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Reviews
               </Link>
               <a
                 href="#about"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 About Us
               </a>
               <a
                 href="#quote"
-                className="w-full flex justify-center items-center bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 mt-4"
+                className="w-full flex justify-center items-center bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 mt-4 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Get a Quote

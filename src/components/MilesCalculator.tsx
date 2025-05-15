@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import PaymentOptions from './PaymentOptions';
 
 // Sample airline data for the calculator
 const airlines = [
@@ -149,6 +150,11 @@ const MilesCalculator = () => {
               </div>
             </div>
           </div>
+        </div>
+        
+        {/* Add payment options component inside the calculator section */}
+        <div className="mt-6">
+          <PaymentOptions />
         </div>
       </div>
     </section>

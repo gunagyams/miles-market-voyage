@@ -24,7 +24,6 @@ const Index = () => {
       <AirlineCards />
       <WhyBuyMiles />
       <MilesCalculator />
-      <PaymentOptions />
       <Testimonials />
       <AboutUs />
       <QuoteForm />
