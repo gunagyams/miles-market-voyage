@@ -1,6 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,70 +7,109 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+    --navy: #091242;
+    --navy-dark: #051042;
+    --gold: #E4AB2C;
+    --gold-dark: #d49a1e;
+    --red: #D71F27;
+    --green: #018557;
   }
   
-  body {
-    @apply bg-background text-foreground font-jakarta;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-instrument;
+  html {
+    scroll-behavior: smooth;
   }
 }
 
 @layer components {
-  .gold-gradient {
-    background: linear-gradient(135deg, #D4AF37 0%, #F5E7C1 50%, #D4AF37 100%);
-  }
-  
-  .card-shadow {
-    box-shadow: 0 10px 30px rgba(10, 35, 66, 0.08);
-  }
-  
-  .arabic-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
   
   .section-padding {
-    @apply py-16 md:py-20 px-4 md:px-8;
+    @apply py-16 md:py-24;
   }
   
-  .container-custom {
-    @apply max-w-7xl mx-auto;
+  .text-gold {
+    color: var(--gold);
   }
+  
+  .bg-gold {
+    background-color: var(--gold);
+  }
+
+  .hover\:bg-gold-dark:hover {
+    background-color: var(--gold-dark);
+  }
+  
+  .bg-navy {
+    background-color: var(--navy);
+  }
+}
+
+/* Arabic pattern background */
+.arabic-pattern {
+  background-color: var(--navy);
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Confetti animation */
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 20px;
+  top: -100px;
+  opacity: 0;
+  animation: confetti-fall 5s ease-in-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(500%) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* More specific styles for the form */
+#quote .bg-gold {
+  background-color: var(--gold);
+}
+
+#quote .text-gold {
+  color: var(--gold);
+}
+
+/* More Emirates-like styling */
+.bg-gold {
+  background-color: var(--gold);
+}
+
+.bg-red {
+  background-color: var(--red);
+}
+
+.bg-green {
+  background-color: var(--green);
+}
+
+.text-red {
+  color: var(--red);
+}
+
+.text-green {
+  color: var(--green);
 }
