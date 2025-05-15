@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -24,8 +23,6 @@ const Index = () => {
       <AirlineCards />
       <WhyBuyMiles />
       <MilesCalculator />
-      <PaymentOptions />
-      <Testimonials />
       <AboutUs />
       <QuoteForm />
       <Footer />

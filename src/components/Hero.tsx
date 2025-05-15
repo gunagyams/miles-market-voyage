@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, Award, Star } from "lucide-react";
@@ -6,7 +5,7 @@ import { ShieldCheck, Award, Star } from "lucide-react";
 const Hero = () => {
   return (
     <section className="relative min-h-screen text-white pt-24 flex items-center bg-[url('/img/upscalemedia-transformed.png')] bg-cover bg-center">
-      <div className="absolute inset-0 bg-gradient-to-br from-black/55 to-black/30 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 to-black/40 z-0"></div>
       <div className="container-custom z-10 px-6 py-16">
         <div className="max-w-3xl mx-auto text-center animate-fade-in">
           <div className="inline-block mb-6">
@@ -50,10 +49,12 @@ const Hero = () => {
                   </div>
                   <div className="text-left">
                     <p className="font-bold text-white">100% Secure</p>
-                    <p className="text-sm text-gray-200">Verified transactions</p>
+                    <p className="text-sm text-gray-200">
+                      Verified transactions
+                    </p>
                   </div>
                 </div>
-                
+
                 {/* Customer Reviews */}
                 <div className="flex items-center gap-3">
                   <div className="bg-gold/20 p-3 rounded-full">
@@ -64,7 +65,7 @@ const Hero = () => {
                     <p className="text-sm text-gray-200">From 5,000+ reviews</p>
                   </div>
                 </div>
-                
+
                 {/* Awards */}
                 <div className="flex items-center gap-3">
                   <div className="bg-gold/20 p-3 rounded-full">
@@ -79,7 +80,9 @@ const Hero = () => {
                         className="h-5"
                       />
                     </div>
-                    <p className="text-sm text-gray-200">Award winning service</p>
+                    <p className="text-sm text-gray-200">
+                      Award winning service
+                    </p>
                   </div>
                 </div>
               </div>

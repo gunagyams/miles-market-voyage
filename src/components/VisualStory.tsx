@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 
@@ -8,9 +7,9 @@ const VisualStory = () => {
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div className="relative overflow-hidden rounded-xl aspect-[4/3] lg:aspect-square">
-            <img 
-              src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1200&q=80" 
-              alt="Luxury Travel Experience" 
+            <img
+              src="https://images.unsplash.com/photo-1661954864180-e61dea14208a?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Luxury Travel Experience"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-navy/30 to-transparent"></div>
@@ -21,9 +20,13 @@ const VisualStory = () => {
               <div className={cn("h-1 w-24 bg-gold mb-1")}></div>
               <div className={cn("h-1 w-16 bg-gold")}></div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 font-gilda text-navy">Turn Miles Into Memories</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 font-gilda text-navy">
+              Turn Miles Into Memories
+            </h2>
             <p className="text-lg mb-8 text-gray-600 font-jakarta">
-              Whether it's your honeymoon, a last-minute upgrade, or a long-overdue getaway — make it unforgettable with miles that take you farther for less.
+              Whether it's your honeymoon, a last-minute upgrade, or a
+              long-overdue getaway — make it unforgettable with miles that take
+              you farther for less.
             </p>
             <div>
               <a

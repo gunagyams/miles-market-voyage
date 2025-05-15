@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,7 +6,7 @@ import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
-  NavigationMenuLink
+  NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 
 const Header = () => {
@@ -21,9 +20,12 @@ const Header = () => {
     <header className="fixed w-full bg-white bg-opacity-95 z-50 shadow-sm">
       {/* Announcement bar */}
       <div className="bg-navy py-2 text-center text-white text-xs hidden md:block">
-        <p className="font-jakarta">Premium Airline Miles Marketplace • Save Up To 70% On Luxury Flight Tickets</p>
+        <p className="font-jakarta">
+          The World’s Leading & Most Trusted Airline Miles Seller - Experience
+          Premium Travel Savings
+        </p>
       </div>
-      
+
       <div className="container-custom px-6 relative md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Left Navigation */}
@@ -47,7 +49,7 @@ const Header = () => {
               Reviews
             </Link>
           </nav>
-          
+
           {/* Logo (Center aligned) */}
           <div className="flex flex-col items-center justify-center">
             <Link to="/" className="flex items-center p-0">
@@ -71,12 +73,6 @@ const Header = () => {
 
           {/* Right Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a
-              href="#testimonials"
-              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
-            >
-              Testimonials
-            </a>
             <a
               href="#about"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
