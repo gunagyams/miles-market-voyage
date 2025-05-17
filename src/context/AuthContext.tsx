@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,8 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // The user exists in auth system, now check if they're in the admin_users table
       const { data: adminData, error: adminError } = await supabase.rpc(
-        'is_admin',
-        { user_id: data.user.id }
+        'is_admin'
       );
 
       if (adminError) {
