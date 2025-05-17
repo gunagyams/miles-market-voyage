@@ -44,6 +44,8 @@ serve(async (req) => {
         let userId;
         if (userError) {
           // If user already exists, try to get the user id
+          console.log(`Error creating user ${admin.email}:`, userError.message);
+          
           const { data: existingUser, error: fetchError } = await supabaseClient.auth.admin.listUsers();
           if (fetchError) throw fetchError;
           
@@ -56,6 +58,8 @@ serve(async (req) => {
         } else {
           userId = userData.user!.id;
         }
+
+        console.log(`User ${admin.email} has ID: ${userId}`);
 
         // Now make sure this user is in the admin_users table
         const { data: adminCheck, error: adminCheckError } = await supabaseClient
@@ -78,6 +82,7 @@ serve(async (req) => {
 
         results.push({ email: admin.email, status: "created successfully" });
       } catch (error) {
+        console.error(`Error processing admin ${admin.email}:`, error);
         results.push({ email: admin.email, status: "error", message: error.message });
       }
     }
@@ -87,6 +92,7 @@ serve(async (req) => {
       { status: 200, headers }
     );
   } catch (error) {
+    console.error("Main function error:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 400, headers }

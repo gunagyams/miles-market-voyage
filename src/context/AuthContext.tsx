@@ -60,11 +60,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       if (error) {
+        console.error("Authentication error:", error);
         return { success: false, error: error.message };
       }
 
-      // Since we've already validated the email in the Login component,
-      // we can assume anyone who successfully authenticates is an admin
+      // If authentication succeeded, confirm that the user is in the admin_users table
+      const { data: adminData, error: adminError } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
+
+      if (adminError || !adminData) {
+        console.error("Admin check error:", adminError);
+        // Sign out since this user is not an admin
+        await supabase.auth.signOut();
+        return { 
+          success: false, 
+          error: "You are not authorized to access the admin area." 
+        };
+      }
+
       return { success: true, error: null };
     } catch (error) {
       console.error("Sign in error:", error);
