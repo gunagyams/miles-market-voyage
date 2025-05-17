@@ -59,7 +59,7 @@ export const safeSupabaseOperation = async <T>(
 
 // Direct admin operations that bypass RLS using security definer functions
 export const directAdminOperation = async <T>(
-  operation: "is_user_admin" | "is_admin",  // Update this to include all valid operation names
+  operation: "is_admin",  // Fix: Only include "is_admin" as the valid operation name
   params?: Record<string, any>
 ): Promise<T> => {
   try {
