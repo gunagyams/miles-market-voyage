@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -62,10 +61,13 @@ const Leads = () => {
         query = query.eq("status", statusFilter);
       }
       
-      const data = await safeSupabaseOperation(() => query);
+      const data = await safeSupabaseOperation(async () => {
+        const response = await query;
+        return response;
+      });
 
       console.log("Fetched leads:", data);
-      setLeads(data || []);
+      setLeads(data as Lead[] || []);
     } catch (error: any) {
       console.error("Error fetching leads:", error);
       toast({
@@ -96,15 +98,16 @@ const Leads = () => {
     if (!currentLead) return;
     setIsUpdating(true);
     try {
-      await safeSupabaseOperation(() => 
-        supabase
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("leads")
           .update({ 
             status, 
             updated_at: new Date().toISOString() 
           })
-          .eq("id", currentLead.id)
-      );
+          .eq("id", currentLead.id);
+        return response;
+      });
       
       toast({
         title: "Success",
@@ -127,12 +130,13 @@ const Leads = () => {
   const handleDelete = async () => {
     if (!currentLead) return;
     try {
-      await safeSupabaseOperation(() => 
-        supabase
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("leads")
           .delete()
-          .eq("id", currentLead.id)
-      );
+          .eq("id", currentLead.id);
+        return response;
+      });
       
       toast({
         title: "Success",

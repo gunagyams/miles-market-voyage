@@ -27,24 +27,28 @@ const Settings = () => {
   const fetchSettings = async () => {
     setIsLoading(true);
     try {
-      const data = await safeSupabaseOperation(() => 
-        supabase
+      const data = await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("site_settings")
           .select("*")
           .eq("id", "contact_details")
-          .maybeSingle()
-      );
+          .maybeSingle();
+        return response;
+      });
       
       console.log("Fetched settings data:", data);
       
       if (data) {
-        // Properly cast the value to ContactDetails
-        const contactData = data.value as Record<string, string>;
-        setContactDetails({
-          address: contactData.address || "",
-          phone: contactData.phone || "",
-          email: contactData.email || ""
-        });
+        // Type assertion with safety check
+        const dataValue = data.value;
+        if (dataValue && typeof dataValue === 'object') {
+          const contactData = dataValue as Record<string, string>;
+          setContactDetails({
+            address: contactData.address || "",
+            phone: contactData.phone || "",
+            email: contactData.email || ""
+          });
+        }
       } else {
         // Settings not found, initialize them
         await initializeSettings();
@@ -78,15 +82,16 @@ const Settings = () => {
 
       console.log("Initializing settings with:", initialData);
 
-      await safeSupabaseOperation(() => 
-        supabase
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("site_settings")
           .insert({ 
             id: "contact_details", 
             value: initialData as unknown as Json,
             updated_at: new Date().toISOString()
-          })
-      );
+          });
+        return response;
+      });
 
       setContactDetails(initialData);
     } catch (error: any) {
@@ -114,36 +119,39 @@ const Settings = () => {
       console.log("Saving contact details:", contactDetails);
       
       // Check if contact details exist before updating
-      const existingData = await safeSupabaseOperation(() => 
-        supabase
+      const existingData = await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("site_settings")
           .select("*")
           .eq("id", "contact_details")
-          .maybeSingle()
-      );
+          .maybeSingle();
+        return response;
+      });
       
       if (!existingData) {
         // Insert new record if it doesn't exist
-        await safeSupabaseOperation(() => 
-          supabase
+        await safeSupabaseOperation(async () => {
+          const response = await supabase
             .from("site_settings")
             .insert({ 
               id: "contact_details", 
               value: contactDetails as unknown as Json, 
               updated_at: new Date().toISOString() 
-            })
-        );
+            });
+          return response;
+        });
       } else {
         // Update existing record
-        await safeSupabaseOperation(() => 
-          supabase
+        await safeSupabaseOperation(async () => {
+          const response = await supabase
             .from("site_settings")
             .update({ 
               value: contactDetails as unknown as Json, 
               updated_at: new Date().toISOString() 
             })
-            .eq("id", "contact_details")
-        );
+            .eq("id", "contact_details");
+          return response;
+        });
       }
       
       toast({

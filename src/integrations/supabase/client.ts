@@ -59,8 +59,8 @@ export const safeSupabaseOperation = async <T>(
 
 // Direct admin operations that bypass RLS using security definer functions
 export const directAdminOperation = async <T>(
-  operation: string,
-  params?: any
+  operation: "is_user_admin" | string,  // Accept both literal and string for backward compatibility
+  params?: Record<string, any>
 ): Promise<T> => {
   try {
     const { data, error } = await supabase.rpc(operation, params);

@@ -49,15 +49,16 @@ const Airlines = () => {
   const fetchAirlines = async () => {
     setIsLoading(true);
     try {
-      const data = await safeSupabaseOperation(() => 
-        supabase
+      const data = await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("airlines")
           .select("*")
-          .order("name")
-      );
+          .order("name");
+        return response;
+      });
       
       console.log("Fetched airlines:", data);
-      setAirlines(data || []);
+      setAirlines(data as Airline[] || []);
     } catch (error: any) {
       console.error("Error fetching airlines:", error);
       toast({
@@ -121,12 +122,13 @@ const Airlines = () => {
       
       if (currentAirline) {
         // Update existing airline
-        await safeSupabaseOperation(() => 
-          supabase
+        await safeSupabaseOperation(async () => {
+          const response = await supabase
             .from("airlines")
             .update(dataToSave)
-            .eq("id", currentAirline.id)
-        );
+            .eq("id", currentAirline.id);
+          return response;
+        });
         
         toast({
           title: "Success",
@@ -134,11 +136,12 @@ const Airlines = () => {
         });
       } else {
         // Add new airline
-        await safeSupabaseOperation(() => 
-          supabase
+        await safeSupabaseOperation(async () => {
+          const response = await supabase
             .from("airlines")
-            .insert([dataToSave])
-        );
+            .insert([dataToSave]);
+          return response;
+        });
         
         toast({
           title: "Success",
@@ -162,12 +165,13 @@ const Airlines = () => {
   const handleDelete = async () => {
     if (!currentAirline) return;
     try {
-      await safeSupabaseOperation(() => 
-        supabase
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
           .from("airlines")
           .delete()
-          .eq("id", currentAirline.id)
-      );
+          .eq("id", currentAirline.id);
+        return response;
+      });
       
       toast({
         title: "Success",
