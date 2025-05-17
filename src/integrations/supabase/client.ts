@@ -58,12 +58,12 @@ export const safeSupabaseOperation = async <T>(
 };
 
 // Direct admin operations that bypass RLS using security definer functions
+// Note: Since is_admin() no longer takes parameters, we've simplified this function
 export const directAdminOperation = async <T>(
-  operation: "is_admin",  // Only include "is_admin" as the valid operation name
-  params?: Record<PropertyKey, never>  // Fix: Updated to match the expected type
+  operation: "is_admin"
 ): Promise<T> => {
   try {
-    const { data, error } = await supabase.rpc(operation, params || {});
+    const { data, error } = await supabase.rpc(operation);
     
     if (error) {
       console.error(`Supabase RPC error for ${operation}:`, error);

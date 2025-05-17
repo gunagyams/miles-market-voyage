@@ -26,9 +26,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       console.log("Verifying admin status for user:", user.id);
 
       try {
-        // Use the is_admin function from Supabase RPC
-        // Removed user_id parameter since the is_admin function doesn't take parameters
-        const isUserAdmin = await directAdminOperation<boolean>("is_admin");
+        // Call the is_admin RPC function that now has proper security definer setup
+        const { data: isUserAdmin, error } = await supabase.rpc('is_admin');
+        
+        if (error) {
+          throw error;
+        }
+        
         console.log("Admin check result:", isUserAdmin);
         setIsAdmin(isUserAdmin);
       } catch (err) {
