@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -19,9 +18,8 @@ const Login = () => {
       if (user) {
         console.log("User already logged in, checking admin status");
         try {
-          // Make sure to use the correct function name 'is_user_admin'
           const { data: isAdmin, error } = await supabase.rpc(
-            'is_user_admin',
+            'is_admin',
             { user_id: user.id }
           );
 
