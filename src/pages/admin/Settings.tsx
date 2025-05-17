@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,8 @@ const Settings = () => {
         .select("*")
         .eq("id", "contact_details")
         .single();
+
+      console.log("Fetched settings data:", data);
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -71,6 +73,8 @@ const Settings = () => {
         email: ""
       };
 
+      console.log("Initializing settings with:", initialData);
+
       const { error } = await supabase
         .from("site_settings")
         .insert({ 
@@ -79,7 +83,10 @@ const Settings = () => {
           updated_at: new Date().toISOString()
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error initializing settings:", error);
+        throw error;
+      }
 
       setContactDetails(initialData);
     } catch (error) {
@@ -105,28 +112,57 @@ const Settings = () => {
     setIsSaving(true);
     try {
       console.log("Saving contact details:", contactDetails);
-      const { error } = await supabase
+      
+      // Check if contact details exist before updating
+      const { data: existingData, error: checkError } = await supabase
         .from("site_settings")
-        .update({ 
-          value: contactDetails as unknown as Json, 
-          updated_at: new Date().toISOString() 
-        })
-        .eq("id", "contact_details");
+        .select("*")
+        .eq("id", "contact_details")
+        .maybeSingle();
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error("Error checking settings:", checkError);
+        throw checkError;
+      }
+
+      let saveError;
+      
+      if (!existingData) {
+        // Insert new record if it doesn't exist
+        const { error } = await supabase
+          .from("site_settings")
+          .insert({ 
+            id: "contact_details", 
+            value: contactDetails as unknown as Json, 
+            updated_at: new Date().toISOString() 
+          });
+        saveError = error;
+      } else {
+        // Update existing record
+        const { error } = await supabase
+          .from("site_settings")
+          .update({ 
+            value: contactDetails as unknown as Json, 
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", "contact_details");
+        saveError = error;
+      }
+
+      if (saveError) {
+        console.error("Supabase error:", saveError);
+        throw saveError;
       }
       
       toast({
         title: "Success",
         description: "Contact details updated successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating settings:", error);
       toast({
         title: "Error",
-        description: "Failed to update contact details.",
+        description: `Failed to update contact details: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
     } finally {

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,
@@ -54,7 +54,12 @@ const Airlines = () => {
         .select("*")
         .order("name");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching airlines:", error);
+        throw error;
+      }
+      
+      console.log("Fetched airlines:", data);
       setAirlines(data || []);
     } catch (error) {
       console.error("Error fetching airlines:", error);
@@ -107,12 +112,14 @@ const Airlines = () => {
       // Convert string values to appropriate types
       const dataToSave = {
         name: formValues.name,
-        logo: formValues.logo,
+        logo: formValues.logo || "✈️", // Ensure we have a fallback
         price_per_mile: Number(formValues.price_per_mile),
         min_miles: Number(formValues.min_miles),
         delivery_estimate: formValues.delivery_estimate,
         updated_at: new Date().toISOString()
       };
+      
+      console.log("Saving airline data:", dataToSave);
       
       if (currentAirline) {
         // Update existing airline
@@ -146,11 +153,11 @@ const Airlines = () => {
       }
       setOpenDialog(false);
       fetchAirlines();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving airline:", error);
       toast({
         title: "Error",
-        description: "Failed to save airline data.",
+        description: `Failed to save airline data: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
     }
@@ -164,7 +171,10 @@ const Airlines = () => {
         .delete()
         .eq("id", currentAirline.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error deleting airline:", error);
+        throw error;
+      }
       toast({
         title: "Success",
         description: "Airline deleted successfully.",

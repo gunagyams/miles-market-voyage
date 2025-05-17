@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Table,
@@ -63,7 +63,12 @@ const Leads = () => {
       
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching leads:", error);
+        throw error;
+      }
+      
+      console.log("Fetched leads:", data);
       setLeads(data || []);
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -102,7 +107,10 @@ const Leads = () => {
         })
         .eq("id", currentLead.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating lead status:", error);
+        throw error;
+      }
       toast({
         title: "Success",
         description: "Lead status updated successfully.",
@@ -127,7 +135,10 @@ const Leads = () => {
         .delete()
         .eq("id", currentLead.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error deleting lead:", error);
+        throw error;
+      }
       toast({
         title: "Success",
         description: "Lead deleted successfully.",

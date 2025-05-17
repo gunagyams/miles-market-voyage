@@ -25,5 +25,28 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     headers: {
       'x-application-name': 'cash-my-points'
     }
+  },
+  db: {
+    schema: 'public'
   }
 });
+
+// Enhanced error handling functions for Supabase operations
+export const safeSupabaseOperation = async <T>(
+  operation: () => Promise<{ data: T | null; error: any }>,
+  errorMessage: string = "Database operation failed"
+): Promise<T> => {
+  try {
+    const { data, error } = await operation();
+    
+    if (error) {
+      console.error(`Supabase error:`, error);
+      throw new Error(`${errorMessage}: ${error.message}`);
+    }
+    
+    return data as T;
+  } catch (error) {
+    console.error(`Error during operation:`, error);
+    throw error;
+  }
+};
