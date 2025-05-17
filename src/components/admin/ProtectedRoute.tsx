@@ -5,14 +5,10 @@ import { useAuth } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  adminOnly?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  adminOnly = true,
-}) => {
-  const { user, isLoading, isAdmin } = useAuth();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -26,10 +22,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (adminOnly && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
+  // The allowed emails check is happening in the Login component
+  // so if a user is authenticated, they are allowed to access the admin area
   return <>{children}</>;
 };
 

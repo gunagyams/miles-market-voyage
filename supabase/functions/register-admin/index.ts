@@ -1,8 +1,7 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.43.2";
 
-// This function will only be callable once to set up the initial admin user
+// This function should be run once to set up the initial admin users
 serve(async (req) => {
   // CORS headers
   const headers = {
@@ -24,57 +23,66 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Check if any admin users already exist
-    const { data: adminUsers, error: adminCheckError } = await supabaseClient
-      .from("admin_users")
-      .select("id")
-      .limit(1);
+    // Create admin users with the specified credentials
+    const admins = [
+      { email: "cashmypoints@proton.me", password: "Fly@2025" },
+      { email: "gunagyams@gmail.com", password: "Fly@2025" }
+    ];
+    
+    const results = [];
 
-    if (adminCheckError) {
-      throw adminCheckError;
-    }
+    for (const admin of admins) {
+      try {
+        // Try to create the user first
+        const { data: userData, error: userError } = await supabaseClient.auth.admin.createUser({
+          email: admin.email,
+          password: admin.password,
+          email_confirm: true,
+        });
 
-    // If admin users already exist, prevent execution
-    if (adminUsers && adminUsers.length > 0) {
-      return new Response(
-        JSON.stringify({ error: "Admin user already exists" }),
-        { status: 400, headers }
-      );
-    }
+        let userId;
+        if (userError) {
+          // If user already exists, try to get the user id
+          const { data: existingUser, error: fetchError } = await supabaseClient.auth.admin.listUsers();
+          if (fetchError) throw fetchError;
+          
+          const foundUser = existingUser.users.find(u => u.email === admin.email);
+          if (foundUser) {
+            userId = foundUser.id;
+          } else {
+            throw new Error(`Could not create or find user with email ${admin.email}`);
+          }
+        } else {
+          userId = userData.user!.id;
+        }
 
-    // Parse the request body
-    const { email, password } = await req.json();
+        // Now make sure this user is in the admin_users table
+        const { error: adminCheckError } = await supabaseClient
+          .from("admin_users")
+          .select("*")
+          .eq("id", userId);
 
-    if (!email || !password) {
-      throw new Error("Email and password are required");
-    }
+        // If there was no error, the admin exists
+        if (!adminCheckError) {
+          results.push({ email: admin.email, status: "already exists" });
+          continue;
+        }
 
-    // Create a new user
-    const { data: authData, error: signUpError } = await supabaseClient.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-    });
+        // Otherwise, add to admin_users table
+        const { error: adminInsertError } = await supabaseClient
+          .from("admin_users")
+          .insert([{ id: userId }]);
 
-    if (signUpError) {
-      throw signUpError;
-    }
+        if (adminInsertError) throw adminInsertError;
 
-    if (!authData.user) {
-      throw new Error("Failed to create user");
-    }
-
-    // Add the user to the admin_users table
-    const { error: adminInsertError } = await supabaseClient
-      .from("admin_users")
-      .insert([{ id: authData.user.id }]);
-
-    if (adminInsertError) {
-      throw adminInsertError;
+        results.push({ email: admin.email, status: "created successfully" });
+      } catch (error) {
+        results.push({ email: admin.email, status: "error", message: error.message });
+      }
     }
 
     return new Response(
-      JSON.stringify({ success: true, message: "Admin user created successfully" }),
+      JSON.stringify({ success: true, results }),
       { status: 200, headers }
     );
   } catch (error) {

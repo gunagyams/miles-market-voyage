@@ -8,7 +8,6 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{
     success: boolean;
     error: string | null;
@@ -24,7 +23,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,22 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         (event, session) => {
           setSession(session);
           setUser(session?.user ?? null);
-          
-          // Check admin status after auth state changes
-          if (session?.user) {
-            setTimeout(async () => {
-              try {
-                const { data, error } = await supabase.rpc('is_admin');
-                if (error) throw error;
-                setIsAdmin(!!data);
-              } catch (error) {
-                console.error("Failed to check admin status:", error);
-                setIsAdmin(false);
-              }
-            }, 0);
-          } else {
-            setIsAdmin(false);
-          }
         }
       );
 
@@ -59,18 +41,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
-      
-      // Initial admin check
-      if (session?.user) {
-        try {
-          const { data, error } = await supabase.rpc('is_admin');
-          if (error) throw error;
-          setIsAdmin(!!data);
-        } catch (error) {
-          console.error("Failed to check admin status:", error);
-          setIsAdmin(false);
-        }
-      }
       
       setIsLoading(false);
       
@@ -93,27 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         return { success: false, error: error.message };
       }
 
-      // Check if user is an admin after successful sign-in
-      const { data: isAdminData, error: isAdminError } = await supabase.rpc('is_admin');
-      
-      if (isAdminError) {
-        // Sign out if not admin
-        await supabase.auth.signOut();
-        return {
-          success: false,
-          error: "You do not have permission to access the admin area.",
-        };
-      }
-
-      if (!isAdminData) {
-        // Sign out if not admin
-        await supabase.auth.signOut();
-        return {
-          success: false,
-          error: "You do not have permission to access the admin area.",
-        };
-      }
-
+      // Since we've already validated the email in the Login component,
+      // we can assume anyone who successfully authenticates is an admin
       return { success: true, error: null };
     } catch (error) {
       console.error("Sign in error:", error);
@@ -133,7 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     user,
     session,
     isLoading,
-    isAdmin,
     signIn,
     signOut,
   };

@@ -16,6 +16,22 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Only allow specific admin emails
+    const allowedAdminEmails = [
+      "cashmypoints@proton.me",
+      "gunagyams@gmail.com"
+    ];
+
+    if (!allowedAdminEmails.includes(email)) {
+      toast({
+        title: "Access denied",
+        description: "This email is not authorized to access the admin area.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { success, error } = await signIn(email, password);
 

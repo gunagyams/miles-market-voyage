@@ -15,7 +15,6 @@ import Airlines from "./pages/admin/Airlines";
 import Leads from "./pages/admin/Leads";
 import Settings from "./pages/admin/Settings";
 import Login from "./pages/admin/Login";
-import RegisterAdmin from "./pages/admin/RegisterAdmin";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +31,6 @@ const App = () => (
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<Login />} />
-            <Route path="/admin/register" element={<RegisterAdmin />} />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <DashboardLayout />
