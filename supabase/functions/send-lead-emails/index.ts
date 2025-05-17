@@ -2,7 +2,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// Initialize Resend with the API key from environment variables
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
+if (!resendApiKey) {
+  console.error("RESEND_API_KEY is not set. Emails will not be sent.");
+}
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,6 +37,17 @@ const handler = async (req: Request): Promise<Response> => {
     const { firstName, lastName, email, phone, airline, miles, estimatedTotal, adminEmails, notificationsEnabled } = payload;
     
     console.log("Received lead email request:", payload);
+    console.log("Resend API key configured:", resendApiKey ? "Yes" : "No");
+    
+    if (!resendApiKey) {
+      return new Response(
+        JSON.stringify({ success: false, message: "RESEND_API_KEY is not configured" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
     
     if (!notificationsEnabled) {
       console.log("Email notifications are disabled in settings, skipping email sending");
