@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,7 +18,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, Download } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { saveAs } from 'file-saver';
+import { utils, writeFile } from 'xlsx';
 
 interface Lead {
   id: string;
@@ -95,7 +98,7 @@ const Leads = () => {
         .from("leads")
         .update({ 
           status, 
-          updated_at: new Date().toISOString()  // Convert Date to ISO string
+          updated_at: new Date().toISOString()
         })
         .eq("id", currentLead.id);
 
@@ -169,6 +172,41 @@ const Leads = () => {
     }
   };
 
+  const exportToExcel = () => {
+    try {
+      // Create a worksheet from the leads data
+      const worksheet = utils.json_to_sheet(leads.map(lead => ({
+        Date: formatDate(lead.created_at),
+        Name: `${lead.first_name} ${lead.last_name}`,
+        Email: lead.email,
+        Phone: lead.phone || "N/A",
+        Airline: lead.airline || "N/A",
+        Miles: lead.miles_amount ? lead.miles_amount.toLocaleString() : "N/A",
+        Status: lead.status,
+        Message: lead.message || "N/A"
+      })));
+
+      // Create a workbook with the worksheet
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, worksheet, "Leads");
+
+      // Generate Excel file and save
+      writeFile(workbook, "CashMyPoints_Leads.xlsx");
+
+      toast({
+        title: "Success",
+        description: "Leads exported successfully.",
+      });
+    } catch (error) {
+      console.error("Error exporting leads:", error);
+      toast({
+        title: "Error",
+        description: "Failed to export leads data.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -198,9 +236,15 @@ const Leads = () => {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="outline" onClick={fetchLeads}>
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={fetchLeads}>
+            Refresh
+          </Button>
+          <Button variant="outline" onClick={exportToExcel} className="flex items-center gap-1">
+            <Download className="h-4 w-4" />
+            Export to Excel
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (

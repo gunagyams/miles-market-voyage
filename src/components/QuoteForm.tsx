@@ -4,8 +4,10 @@ import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PartyPopper } from "lucide-react";
+import { PartyPopper, Check, X } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 interface Airline {
   id: string;
@@ -18,6 +20,7 @@ const QuoteForm = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [isLoadingAirlines, setIsLoadingAirlines] = useState(true);
+  const [phoneValid, setPhoneValid] = useState(true);
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,6 +31,7 @@ const QuoteForm = () => {
     whatsapp: '',
     email: '',
     message: '',
+    countryCode: 'ae', // Default to UAE
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,6 +80,17 @@ const QuoteForm = () => {
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!formData.whatsapp || formData.whatsapp.length < 8) {
+      setPhoneValid(false);
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid WhatsApp number.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
@@ -106,7 +121,9 @@ const QuoteForm = () => {
         whatsapp: '',
         email: '',
         message: '',
+        countryCode: 'ae',
       });
+      setPhoneValid(true);
     } catch (error) {
       console.error('Error submitting lead:', error);
       toast({
@@ -117,6 +134,16 @@ const QuoteForm = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+  
+  const handlePhoneChange = (value: string, country: any) => {
+    setFormData({
+      ...formData,
+      whatsapp: value,
+      countryCode: country.countryCode
+    });
+    // Simple validation - check if phone number has at least 8 digits
+    setPhoneValid(value.length >= 8);
   };
   
   // Calculate approximate price
@@ -231,16 +258,35 @@ const QuoteForm = () => {
                 
                 <div>
                   <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
-                  <input
-                    type="tel"
-                    id="whatsapp"
-                    name="whatsapp"
-                    value={formData.whatsapp}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
-                    placeholder="+971 XX XXX XXXX"
-                  />
+                  <div className="relative">
+                    <PhoneInput
+                      country={formData.countryCode}
+                      value={formData.whatsapp}
+                      onChange={handlePhoneChange}
+                      inputProps={{
+                        name: 'whatsapp',
+                        required: true,
+                        className: cn(
+                          "w-full px-4 py-2 border rounded-md focus:ring-2 focus:outline-none pl-12",
+                          phoneValid ? "border-gray-300 focus:ring-gold" : "border-red-500 focus:ring-red-500"
+                        )
+                      }}
+                      containerClass="w-full"
+                      dropdownClass="bg-white shadow-lg border border-gray-300 rounded-md"
+                    />
+                    {formData.whatsapp && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {phoneValid ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {!phoneValid && (
+                    <p className="text-xs text-red-600 mt-1">Please enter a valid phone number.</p>
+                  )}
                 </div>
                 
                 <div>
@@ -284,10 +330,10 @@ const QuoteForm = () => {
               <div className="mt-6">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !phoneValid}
                   className={cn(
                     "w-full py-3 px-6 rounded-md font-medium text-white transition-colors duration-200",
-                    isSubmitting ? "bg-gray-400" : "bg-gold hover:bg-gold-dark"
+                    (isSubmitting || !phoneValid) ? "bg-gray-400" : "bg-gold hover:bg-gold-dark"
                   )}
                 >
                   {isSubmitting ? "Processing..." : "Request Miles Purchase"}

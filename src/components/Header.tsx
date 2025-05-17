@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ const Header = () => {
       {/* Announcement bar */}
       <div className="bg-navy py-2 text-center text-white text-xs hidden md:block">
         <p className="font-jakarta">
-          The World’s Leading & Most Trusted Airline Miles Seller - Experience
+          The World's Leading & Most Trusted Airline Miles Seller - Experience
           Premium Travel Savings
         </p>
       </div>
@@ -30,18 +31,18 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Left Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a
-              href="#airlines"
+            <Link
+              to="/#airlines"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Airlines
-            </a>
-            <a
-              href="#calculator"
+            </Link>
+            <Link
+              to="/#calculator"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Calculator
-            </a>
+            </Link>
             <Link
               to="/reviews"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
@@ -73,18 +74,18 @@ const Header = () => {
 
           {/* Right Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a
-              href="#about"
+            <Link
+              to="/#about"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               About Us
-            </a>
-            <a
-              href="#quote"
+            </Link>
+            <Link
+              to="/#quote"
               className="bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Get a Quote
-            </a>
+            </Link>
           </nav>
         </div>
 
@@ -118,27 +119,20 @@ const Header = () => {
             </div>
 
             <div className="flex flex-col items-end w-full">
-              <a
-                href="#airlines"
+              <Link
+                to="/#airlines"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Airlines
-              </a>
-              <a
-                href="#calculator"
+              </Link>
+              <Link
+                to="/#calculator"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Calculator
-              </a>
-              <a
-                href="#testimonials"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
-              >
-                Testimonials
-              </a>
+              </Link>
               <Link
                 to="/reviews"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
@@ -146,20 +140,20 @@ const Header = () => {
               >
                 Reviews
               </Link>
-              <a
-                href="#about"
+              <Link
+                to="/#about"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 About Us
-              </a>
-              <a
-                href="#quote"
+              </Link>
+              <Link
+                to="/#quote"
                 className="w-full flex justify-center items-center bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 mt-4 font-jakarta text-sm uppercase tracking-wide"
                 onClick={toggleMenu}
               >
                 Get a Quote
-              </a>
+              </Link>
             </div>
           </div>
         </div>
