@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Save, Phone, Mail, MapPin } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
 
 interface ContactDetails {
   address: string;
@@ -33,7 +34,16 @@ const Settings = () => {
         .single();
 
       if (error) throw error;
-      setContactDetails(data.value as ContactDetails);
+      
+      // Properly cast the value to ContactDetails
+      if (data && data.value) {
+        const contactData = data.value as Record<string, string>;
+        setContactDetails({
+          address: contactData.address || "",
+          phone: contactData.phone || "",
+          email: contactData.email || ""
+        });
+      }
     } catch (error) {
       console.error("Error fetching settings:", error);
       toast({
@@ -60,7 +70,10 @@ const Settings = () => {
     try {
       const { error } = await supabase
         .from("site_settings")
-        .update({ value: contactDetails, updated_at: new Date() })
+        .update({ 
+          value: contactDetails as unknown as Json, 
+          updated_at: new Date().toISOString() 
+        })
         .eq("id", "contact_details");
 
       if (error) throw error;

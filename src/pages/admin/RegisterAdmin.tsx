@@ -55,7 +55,8 @@ const RegisterAdmin = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${supabase.auth.getCookies().anon}`
+            // Use proper authorization header from Supabase
+            "Authorization": `Bearer ${supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`
           },
           body: JSON.stringify({ email, password }),
         }

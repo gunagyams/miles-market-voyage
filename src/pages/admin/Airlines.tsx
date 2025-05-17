@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -114,7 +113,7 @@ const Airlines = () => {
             price_per_mile: formValues.price_per_mile,
             min_miles: formValues.min_miles,
             delivery_estimate: formValues.delivery_estimate,
-            updated_at: new Date(),
+            updated_at: new Date().toISOString(), // Convert Date to ISO string
           })
           .eq("id", currentAirline.id);
 

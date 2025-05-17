@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -94,7 +93,10 @@ const Leads = () => {
     try {
       const { error } = await supabase
         .from("leads")
-        .update({ status, updated_at: new Date() })
+        .update({ 
+          status, 
+          updated_at: new Date().toISOString()  // Convert Date to ISO string
+        })
         .eq("id", currentLead.id);
 
       if (error) throw error;

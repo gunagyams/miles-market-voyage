@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from '@/integrations/supabase/client';
+import { Json } from "@/integrations/supabase/types";
 
 interface ContactDetails {
   address: string;
@@ -28,7 +29,13 @@ const Footer = () => {
         
         if (error) throw error;
         if (data && data.value) {
-          setContactDetails(data.value as ContactDetails);
+          // Cast the value to ContactDetails type with type assertion
+          const contactData = data.value as Record<string, string>;
+          setContactDetails({
+            address: contactData.address || contactDetails.address,
+            phone: contactData.phone || contactDetails.phone,
+            email: contactData.email || contactDetails.email
+          });
         }
       } catch (error) {
         console.error('Error fetching contact details:', error);
