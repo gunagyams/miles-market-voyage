@@ -59,7 +59,7 @@ export const safeSupabaseOperation = async <T>(
 
 // Direct admin operations that bypass RLS using security definer functions
 export const directAdminOperation = async <T>(
-  operation: "is_user_admin" | string,  // Accept both literal and string for backward compatibility
+  operation: string,  // Changed from "is_user_admin" | string to just string to fix the type error
   params?: Record<string, any>
 ): Promise<T> => {
   try {

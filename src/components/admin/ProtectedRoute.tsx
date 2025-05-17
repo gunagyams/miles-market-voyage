@@ -26,7 +26,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       console.log("Verifying admin status for user:", user.id);
 
       try {
-        // Use the function directly and handle any errors safely
+        // Since directAdminOperation now accepts a string type, this is compatible
         const isUserAdmin = await directAdminOperation<boolean>("is_user_admin", { user_id: user.id });
         console.log("Admin check result:", isUserAdmin);
         setIsAdmin(isUserAdmin);
