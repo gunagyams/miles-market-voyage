@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, directAdminOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProtectedRouteProps {
@@ -26,25 +26,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       console.log("Verifying admin status for user:", user.id);
 
       try {
-        // Call the is_admin function without parameters as per type definition
-        const { data: isUserAdmin, error } = await supabase.rpc(
-          'is_admin'
-        );
-
-        if (error) {
-          console.error("Error checking admin status:", error);
-          toast({
-            title: "Error",
-            description: "Failed to verify admin status.",
-            variant: "destructive",
-          });
-          setIsAdmin(false);
-        } else {
-          console.log("Admin check result:", isUserAdmin);
-          setIsAdmin(isUserAdmin); 
-        }
+        // Use the function directly and handle any errors safely
+        const isUserAdmin = await directAdminOperation<boolean>('is_user_admin', { user_id: user.id });
+        console.log("Admin check result:", isUserAdmin);
+        setIsAdmin(isUserAdmin);
       } catch (err) {
         console.error("Admin verification error:", err);
+        toast({
+          title: "Error",
+          description: "Failed to verify admin status. Please try again later.",
+          variant: "destructive",
+        });
         setIsAdmin(false);
       } finally {
         setCheckingAdmin(false);

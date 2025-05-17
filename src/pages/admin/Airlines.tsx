@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +32,7 @@ interface Airline {
 const Airlines = () => {
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [currentAirline, setCurrentAirline] = useState<Airline | null>(null);
@@ -49,23 +49,20 @@ const Airlines = () => {
   const fetchAirlines = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("airlines")
-        .select("*")
-        .order("name");
-
-      if (error) {
-        console.error("Error fetching airlines:", error);
-        throw error;
-      }
+      const data = await safeSupabaseOperation(() => 
+        supabase
+          .from("airlines")
+          .select("*")
+          .order("name")
+      );
       
       console.log("Fetched airlines:", data);
       setAirlines(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching airlines:", error);
       toast({
         title: "Error",
-        description: "Failed to load airlines data.",
+        description: error.message || "Failed to load airlines data.",
         variant: "destructive",
       });
     } finally {
@@ -108,6 +105,7 @@ const Airlines = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       // Convert string values to appropriate types
       const dataToSave = {
@@ -123,29 +121,25 @@ const Airlines = () => {
       
       if (currentAirline) {
         // Update existing airline
-        const { error } = await supabase
-          .from("airlines")
-          .update(dataToSave)
-          .eq("id", currentAirline.id);
-
-        if (error) {
-          console.error("Supabase error:", error);
-          throw error;
-        }
+        await safeSupabaseOperation(() => 
+          supabase
+            .from("airlines")
+            .update(dataToSave)
+            .eq("id", currentAirline.id)
+        );
+        
         toast({
           title: "Success",
           description: "Airline updated successfully.",
         });
       } else {
         // Add new airline
-        const { error } = await supabase
-          .from("airlines")
-          .insert([dataToSave]);
-
-        if (error) {
-          console.error("Supabase error:", error);
-          throw error;
-        }
+        await safeSupabaseOperation(() => 
+          supabase
+            .from("airlines")
+            .insert([dataToSave])
+        );
+        
         toast({
           title: "Success",
           description: "Airline added successfully.",
@@ -157,35 +151,35 @@ const Airlines = () => {
       console.error("Error saving airline:", error);
       toast({
         title: "Error",
-        description: `Failed to save airline data: ${error.message || "Unknown error"}`,
+        description: error.message || "Failed to save airline data.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
     if (!currentAirline) return;
     try {
-      const { error } = await supabase
-        .from("airlines")
-        .delete()
-        .eq("id", currentAirline.id);
-
-      if (error) {
-        console.error("Error deleting airline:", error);
-        throw error;
-      }
+      await safeSupabaseOperation(() => 
+        supabase
+          .from("airlines")
+          .delete()
+          .eq("id", currentAirline.id)
+      );
+      
       toast({
         title: "Success",
         description: "Airline deleted successfully.",
       });
       setDeleteDialog(false);
       fetchAirlines();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting airline:", error);
       toast({
         title: "Error",
-        description: "Failed to delete airline.",
+        description: error.message || "Failed to delete airline.",
         variant: "destructive",
       });
     }
@@ -362,7 +356,9 @@ const Airlines = () => {
               <Button type="button" variant="outline" onClick={() => setOpenDialog(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>

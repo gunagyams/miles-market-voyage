@@ -45,6 +45,7 @@ interface Lead {
 const Leads = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [viewDialog, setViewDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
@@ -57,24 +58,19 @@ const Leads = () => {
     try {
       let query = supabase.from("leads").select("*").order("created_at", { ascending: false });
       
-      if (statusFilter) {
+      if (statusFilter && statusFilter !== "all") {
         query = query.eq("status", statusFilter);
       }
       
-      const { data, error } = await query;
+      const data = await safeSupabaseOperation(() => query);
 
-      if (error) {
-        console.error("Error fetching leads:", error);
-        throw error;
-      }
-      
       console.log("Fetched leads:", data);
       setLeads(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching leads:", error);
       toast({
         title: "Error",
-        description: "Failed to load leads data.",
+        description: error.message || "Failed to load leads data.",
         variant: "destructive",
       });
     } finally {
@@ -98,58 +94,57 @@ const Leads = () => {
 
   const handleStatusChange = async (status: string) => {
     if (!currentLead) return;
+    setIsUpdating(true);
     try {
-      const { error } = await supabase
-        .from("leads")
-        .update({ 
-          status, 
-          updated_at: new Date().toISOString()
-        })
-        .eq("id", currentLead.id);
-
-      if (error) {
-        console.error("Error updating lead status:", error);
-        throw error;
-      }
+      await safeSupabaseOperation(() => 
+        supabase
+          .from("leads")
+          .update({ 
+            status, 
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", currentLead.id)
+      );
+      
       toast({
         title: "Success",
         description: "Lead status updated successfully.",
       });
       setViewDialog(false);
       fetchLeads();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating lead status:", error);
       toast({
         title: "Error",
-        description: "Failed to update lead status.",
+        description: error.message || "Failed to update lead status.",
         variant: "destructive",
       });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   const handleDelete = async () => {
     if (!currentLead) return;
     try {
-      const { error } = await supabase
-        .from("leads")
-        .delete()
-        .eq("id", currentLead.id);
-
-      if (error) {
-        console.error("Error deleting lead:", error);
-        throw error;
-      }
+      await safeSupabaseOperation(() => 
+        supabase
+          .from("leads")
+          .delete()
+          .eq("id", currentLead.id)
+      );
+      
       toast({
         title: "Success",
         description: "Lead deleted successfully.",
       });
       setDeleteDialog(false);
       fetchLeads();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting lead:", error);
       toast({
         title: "Error",
-        description: "Failed to delete lead.",
+        description: error.message || "Failed to delete lead.",
         variant: "destructive",
       });
     }
@@ -231,8 +226,8 @@ const Leads = () => {
             Filter by status:
           </label>
           <Select
-            value={statusFilter || undefined}
-            onValueChange={(value) => setStatusFilter(value || null)}
+            value={statusFilter || "all"}
+            onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All statuses" />
@@ -375,6 +370,7 @@ const Leads = () => {
                 <Select
                   defaultValue={currentLead.status}
                   onValueChange={handleStatusChange}
+                  disabled={isUpdating}
                 >
                   <SelectTrigger className="w-full mt-1">
                     <SelectValue placeholder="Select status" />

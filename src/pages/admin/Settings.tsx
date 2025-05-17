@@ -27,39 +27,42 @@ const Settings = () => {
   const fetchSettings = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("*")
-        .eq("id", "contact_details")
-        .single();
-
-      console.log("Fetched settings data:", data);
-
-      if (error) {
-        if (error.code === 'PGRST116') {
-          // Record not found, create it
-          await initializeSettings();
-          return;
-        }
-        throw error;
-      }
+      const data = await safeSupabaseOperation(() => 
+        supabase
+          .from("site_settings")
+          .select("*")
+          .eq("id", "contact_details")
+          .maybeSingle()
+      );
       
-      // Properly cast the value to ContactDetails
-      if (data && data.value) {
+      console.log("Fetched settings data:", data);
+      
+      if (data) {
+        // Properly cast the value to ContactDetails
         const contactData = data.value as Record<string, string>;
         setContactDetails({
           address: contactData.address || "",
           phone: contactData.phone || "",
           email: contactData.email || ""
         });
+      } else {
+        // Settings not found, initialize them
+        await initializeSettings();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching settings:", error);
       toast({
         title: "Error",
-        description: "Failed to load contact details.",
+        description: error.message || "Failed to load contact details.",
         variant: "destructive",
       });
+      
+      // Try to initialize if fetch fails
+      try {
+        await initializeSettings();
+      } catch (initError) {
+        console.error("Error initializing settings:", initError);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -75,25 +78,22 @@ const Settings = () => {
 
       console.log("Initializing settings with:", initialData);
 
-      const { error } = await supabase
-        .from("site_settings")
-        .insert({ 
-          id: "contact_details", 
-          value: initialData as unknown as Json,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) {
-        console.error("Error initializing settings:", error);
-        throw error;
-      }
+      await safeSupabaseOperation(() => 
+        supabase
+          .from("site_settings")
+          .insert({ 
+            id: "contact_details", 
+            value: initialData as unknown as Json,
+            updated_at: new Date().toISOString()
+          })
+      );
 
       setContactDetails(initialData);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error initializing settings:", error);
       toast({
         title: "Error",
-        description: "Failed to initialize contact details.",
+        description: error.message || "Failed to initialize contact details.",
         variant: "destructive",
       });
     }
@@ -114,44 +114,36 @@ const Settings = () => {
       console.log("Saving contact details:", contactDetails);
       
       // Check if contact details exist before updating
-      const { data: existingData, error: checkError } = await supabase
-        .from("site_settings")
-        .select("*")
-        .eq("id", "contact_details")
-        .maybeSingle();
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        console.error("Error checking settings:", checkError);
-        throw checkError;
-      }
-
-      let saveError;
+      const existingData = await safeSupabaseOperation(() => 
+        supabase
+          .from("site_settings")
+          .select("*")
+          .eq("id", "contact_details")
+          .maybeSingle()
+      );
       
       if (!existingData) {
         // Insert new record if it doesn't exist
-        const { error } = await supabase
-          .from("site_settings")
-          .insert({ 
-            id: "contact_details", 
-            value: contactDetails as unknown as Json, 
-            updated_at: new Date().toISOString() 
-          });
-        saveError = error;
+        await safeSupabaseOperation(() => 
+          supabase
+            .from("site_settings")
+            .insert({ 
+              id: "contact_details", 
+              value: contactDetails as unknown as Json, 
+              updated_at: new Date().toISOString() 
+            })
+        );
       } else {
         // Update existing record
-        const { error } = await supabase
-          .from("site_settings")
-          .update({ 
-            value: contactDetails as unknown as Json, 
-            updated_at: new Date().toISOString() 
-          })
-          .eq("id", "contact_details");
-        saveError = error;
-      }
-
-      if (saveError) {
-        console.error("Supabase error:", saveError);
-        throw saveError;
+        await safeSupabaseOperation(() => 
+          supabase
+            .from("site_settings")
+            .update({ 
+              value: contactDetails as unknown as Json, 
+              updated_at: new Date().toISOString() 
+            })
+            .eq("id", "contact_details")
+        );
       }
       
       toast({
@@ -162,7 +154,7 @@ const Settings = () => {
       console.error("Error updating settings:", error);
       toast({
         title: "Error",
-        description: `Failed to update contact details: ${error.message || "Unknown error"}`,
+        description: error.message || "Failed to update contact details.",
         variant: "destructive",
       });
     } finally {

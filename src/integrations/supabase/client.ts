@@ -41,12 +41,38 @@ export const safeSupabaseOperation = async <T>(
     
     if (error) {
       console.error(`Supabase error:`, error);
+      
+      // Check for the infinite recursion error and provide a more helpful message
+      if (error.code === '42P17' && error.message.includes('infinite recursion')) {
+        throw new Error(`${errorMessage}: There's a problem with the database security policies. Please contact the administrator.`);
+      }
+      
       throw new Error(`${errorMessage}: ${error.message}`);
     }
     
     return data as T;
   } catch (error) {
     console.error(`Error during operation:`, error);
+    throw error;
+  }
+};
+
+// Direct admin operations that bypass RLS using security definer functions
+export const directAdminOperation = async <T>(
+  operation: string,
+  params?: any
+): Promise<T> => {
+  try {
+    const { data, error } = await supabase.rpc(operation, params);
+    
+    if (error) {
+      console.error(`Supabase RPC error for ${operation}:`, error);
+      throw new Error(`Operation failed: ${error.message}`);
+    }
+    
+    return data as T;
+  } catch (error) {
+    console.error(`Error during admin operation:`, error);
     throw error;
   }
 };
