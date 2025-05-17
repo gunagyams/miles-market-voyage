@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.43.2";
 
@@ -57,13 +58,13 @@ serve(async (req) => {
         }
 
         // Now make sure this user is in the admin_users table
-        const { error: adminCheckError } = await supabaseClient
+        const { data: adminCheck, error: adminCheckError } = await supabaseClient
           .from("admin_users")
           .select("*")
           .eq("id", userId);
 
-        // If there was no error, the admin exists
-        if (!adminCheckError) {
+        // If admin exists, skip insertion
+        if (!adminCheckError && adminCheck && adminCheck.length > 0) {
           results.push({ email: admin.email, status: "already exists" });
           continue;
         }

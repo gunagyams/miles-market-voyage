@@ -40,6 +40,8 @@ const App = () => (
               <Route path="airlines" element={<Airlines />} />
               <Route path="leads" element={<Leads />} />
               <Route path="settings" element={<Settings />} />
+              {/* Uncomment this to add the admin registration page if needed in the future */}
+              {/* <Route path="register-admin" element={<RegisterAdmin />} /> */}
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
