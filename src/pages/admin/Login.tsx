@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,37 +13,38 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Redirect if already logged in
+  // Redirect if already logged in and is admin
   useEffect(() => {
-    if (user) {
-      navigate("/admin/dashboard");
-    }
-  }, [user, navigate]);
+    const checkAdminAndRedirect = async () => {
+      if (user) {
+        // Check if user is in admin_users table
+        const { data, error } = await supabase
+          .from("admin_users")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
 
-  // Only allow specific admin emails
-  const allowedAdminEmails = [
-    "cashmypoints@proton.me",
-    "gunagyams@gmail.com"
-  ];
+        if (!error && data) {
+          navigate("/admin/dashboard");
+        }
+      }
+    };
+
+    checkAdminAndRedirect();
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!allowedAdminEmails.includes(email)) {
-      toast({
-        title: "Access denied",
-        description: "This email is not authorized to access the admin area.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const { success, error } = await signIn(email, password);
 
       if (success) {
+        toast({
+          title: "Login successful",
+          description: "Welcome to the admin dashboard.",
+        });
         navigate("/admin/dashboard");
       } else {
         toast({
@@ -57,6 +59,7 @@ const Login = () => {
         description: "An unexpected error occurred.",
         variant: "destructive",
       });
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }

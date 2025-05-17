@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       
       // Set up auth state listener FIRST
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (event, session) => {
+        async (event, session) => {
           setSession(session);
           setUser(session?.user ?? null);
         }
@@ -82,11 +82,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const { data: adminData, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
-        .eq("id", data.user.id);
+        .eq("id", data.user.id)
+        .maybeSingle(); // Use maybeSingle instead of expecting an array
 
-      // If we got results back, the user is in the admin_users table
-      if (adminError || !adminData || adminData.length === 0) {
-        console.error("Admin check error or no admin record found:", adminError || "No admin record found");
+      if (adminError) {
+        console.error("Admin check error:", adminError);
+        // Sign out since we couldn't verify admin status
+        await supabase.auth.signOut();
+        return { 
+          success: false, 
+          error: "Error verifying admin status. Please try again." 
+        };
+      }
+
+      if (!adminData) {
+        console.error("No admin record found for user:", data.user.id);
         // Sign out since this user is not an admin
         await supabase.auth.signOut();
         return { 
