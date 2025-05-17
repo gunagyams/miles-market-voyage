@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
@@ -77,8 +76,13 @@ const QuoteForm = () => {
         
         if (error) throw error;
         
+        // Safely convert the JSON data to EmailSettings
         if (data && data.value) {
-          setEmailSettings(data.value as EmailSettings);
+          const settingsValue = data.value as Record<string, any>;
+          setEmailSettings({
+            notifications_enabled: settingsValue.notifications_enabled ?? true,
+            admin_emails: Array.isArray(settingsValue.admin_emails) ? settingsValue.admin_emails : [],
+          });
         }
       } catch (error) {
         console.error('Error fetching email settings:', error);

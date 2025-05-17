@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -82,10 +81,11 @@ const Settings = () => {
         // Type assertion with safety check
         const dataValue = emailData.value;
         if (dataValue && typeof dataValue === 'object') {
-          const emailValue = dataValue as EmailSettings;
+          // Safely convert JSON data to EmailSettings interface
+          const emailValue = dataValue as Record<string, any>;
           setEmailSettings({
             notifications_enabled: emailValue.notifications_enabled ?? true,
-            admin_emails: emailValue.admin_emails || []
+            admin_emails: Array.isArray(emailValue.admin_emails) ? emailValue.admin_emails : []
           });
         }
       } else {
