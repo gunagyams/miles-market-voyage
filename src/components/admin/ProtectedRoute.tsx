@@ -22,8 +22,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/admin/login" replace />;
   }
 
-  // The allowed emails check is happening in the Login component
-  // so if a user is authenticated, they are allowed to access the admin area
   return <>{children}</>;
 };
 

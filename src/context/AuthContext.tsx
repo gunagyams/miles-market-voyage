@@ -54,6 +54,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signIn = async (email: string, password: string) => {
     try {
+      // First, verify if the email is an allowed admin email before attempting sign in
+      const allowedAdminEmails = [
+        "cashmypoints@proton.me",
+        "gunagyams@gmail.com"
+      ];
+
+      if (!allowedAdminEmails.includes(email)) {
+        console.error("Email not allowed:", email);
+        return { 
+          success: false, 
+          error: "This email is not authorized to access the admin area." 
+        };
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -64,15 +78,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         return { success: false, error: error.message };
       }
 
-      // If authentication succeeded, confirm that the user is in the admin_users table
+      // The user exists in auth system, now check if they're in the admin_users table
       const { data: adminData, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
-        .eq("id", data.user.id)
-        .single();
+        .eq("id", data.user.id);
 
-      if (adminError || !adminData) {
-        console.error("Admin check error:", adminError);
+      // If we got results back, the user is in the admin_users table
+      if (adminError || !adminData || adminData.length === 0) {
+        console.error("Admin check error or no admin record found:", adminError || "No admin record found");
         // Sign out since this user is not an admin
         await supabase.auth.signOut();
         return { 
