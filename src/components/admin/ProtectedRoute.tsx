@@ -26,8 +26,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       console.log("Verifying admin status for user:", user.id);
 
       try {
-        // Since directAdminOperation now accepts a string type, this is compatible
-        const isUserAdmin = await directAdminOperation<boolean>("is_user_admin", { user_id: user.id });
+        // Use the is_admin function from Supabase RPC
+        const isUserAdmin = await directAdminOperation<boolean>("is_admin", { user_id: user.id });
         console.log("Admin check result:", isUserAdmin);
         setIsAdmin(isUserAdmin);
       } catch (err) {
