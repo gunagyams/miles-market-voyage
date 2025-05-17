@@ -9,13 +9,126 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_admin: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          is_admin?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_admin?: boolean | null
+        }
+        Relationships: []
+      }
+      airlines: {
+        Row: {
+          created_at: string | null
+          delivery_estimate: string
+          id: string
+          logo: string
+          min_miles: number
+          name: string
+          price_per_mile: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_estimate?: string
+          id?: string
+          logo?: string
+          min_miles: number
+          name: string
+          price_per_mile: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delivery_estimate?: string
+          id?: string
+          logo?: string
+          min_miles?: number
+          name?: string
+          price_per_mile?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          airline: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          miles_amount: number | null
+          phone: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          airline?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          message?: string | null
+          miles_amount?: number | null
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          airline?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          miles_amount?: number | null
+          phone?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          id: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          id?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

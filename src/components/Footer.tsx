@@ -1,9 +1,42 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from '@/integrations/supabase/client';
+
+interface ContactDetails {
+  address: string;
+  phone: string;
+  email: string;
+}
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({
+    address: "Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE",
+    phone: "+971 4 400 1234",
+    email: "info@cashmypoint.com"
+  });
+
+  useEffect(() => {
+    const fetchContactDetails = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('id', 'contact_details')
+          .single();
+        
+        if (error) throw error;
+        if (data && data.value) {
+          setContactDetails(data.value as ContactDetails);
+        }
+      } catch (error) {
+        console.error('Error fetching contact details:', error);
+      }
+    };
+
+    fetchContactDetails();
+  }, []);
 
   return (
     <footer className="bg-navy text-white pt-12 pb-6">
@@ -138,24 +171,24 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-start">
                 <span className="text-gold mr-2">📍</span>
-                <span className="text-gray-300">Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE</span>
+                <span className="text-gray-300">{contactDetails.address}</span>
               </li>
               <li className="flex items-start">
                 <span className="text-gold mr-2">📱</span>
                 <a
-                  href="tel:+97144001234"
+                  href={`tel:${contactDetails.phone}`}
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
-                  +971 4 400 1234
+                  {contactDetails.phone}
                 </a>
               </li>
               <li className="flex items-start">
                 <span className="text-gold mr-2">✉️</span>
                 <a
-                  href="mailto:info@cashmypoint.com"
+                  href={`mailto:${contactDetails.email}`}
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
-                  info@cashmypoint.com
+                  {contactDetails.email}
                 </a>
               </li>
             </ul>

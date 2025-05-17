@@ -1,39 +1,73 @@
+
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import PaymentOptions from "./PaymentOptions";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-// Sample airline data for the calculator
-const airlines = [
-  { id: 1, name: "Emirates Skywards", pricePerMile: 0.015, minMiles: 10000 },
-  { id: 2, name: "Etihad Guest", pricePerMile: 0.014, minMiles: 15000 },
-  { id: 3, name: "Qatar Privilege", pricePerMile: 0.016, minMiles: 12000 },
-  { id: 4, name: "Turkish Airlines", pricePerMile: 0.012, minMiles: 20000 },
-  { id: 5, name: "British Airways", pricePerMile: 0.018, minMiles: 10000 },
-  { id: 6, name: "Singapore Airlines", pricePerMile: 0.02, minMiles: 15000 },
-];
+interface Airline {
+  id: string;
+  name: string;
+  price_per_mile: number;
+  min_miles: number;
+}
 
 const MilesCalculator = () => {
-  const [selectedAirline, setSelectedAirline] = useState(airlines[0]);
+  const [airlines, setAirlines] = useState<Airline[]>([]);
+  const [selectedAirline, setSelectedAirline] = useState<Airline | null>(null);
   const [milesAmount, setMilesAmount] = useState(25000);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  // Fetch airlines from Supabase
+  useEffect(() => {
+    const fetchAirlines = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('airlines')
+          .select('id, name, price_per_mile, min_miles')
+          .order('name');
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setAirlines(data);
+          setSelectedAirline(data[0]);
+          setMilesAmount(data[0].min_miles);
+        }
+      } catch (error) {
+        console.error('Error fetching airlines:', error);
+        toast({
+          title: "Error loading calculator",
+          description: "Failed to load airline data for the calculator.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAirlines();
+  }, []);
 
   // Calculate total price when airline or miles amount changes
   useEffect(() => {
     if (selectedAirline) {
-      setTotalPrice(milesAmount * selectedAirline.pricePerMile);
+      setTotalPrice(milesAmount * selectedAirline.price_per_mile);
     }
   }, [selectedAirline, milesAmount]);
 
   const handleAirlineChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = airlines.find(
-      (airline) => airline.id === parseInt(event.target.value)
+      (airline) => airline.id === event.target.value
     );
     if (selected) {
       setSelectedAirline(selected);
 
       // Ensure miles are at least the minimum for the selected airline
-      if (milesAmount < selected.minMiles) {
-        setMilesAmount(selected.minMiles);
+      if (milesAmount < selected.min_miles) {
+        setMilesAmount(selected.min_miles);
       }
     }
   };
@@ -47,6 +81,38 @@ const MilesCalculator = () => {
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
+
+  if (isLoading) {
+    return (
+      <section id="calculator" className="relative overflow-hidden pt-12 pb-2">
+        <div className="absolute inset-0 arabic-pattern opacity-10 z-0"></div>
+        <div className="container-custom relative z-10">
+          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden card-shadow animate-pulse">
+            <div className="grid md:grid-cols-2">
+              <div className="bg-navy p-8 h-96"></div>
+              <div className="p-8 h-96"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!selectedAirline || airlines.length === 0) {
+    return (
+      <section id="calculator" className="relative overflow-hidden pt-12 pb-2">
+        <div className="absolute inset-0 arabic-pattern opacity-10 z-0"></div>
+        <div className="container-custom relative z-10 py-12">
+          <div className="max-w-md mx-auto text-center">
+            <h2 className="text-2xl font-bold mb-3 text-navy">Miles Calculator</h2>
+            <p className="text-gray-600">
+              No airline data available. Please check back later.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="calculator" className="relative overflow-hidden pt-12 pb-2">
@@ -80,7 +146,7 @@ const MilesCalculator = () => {
                   >
                     {airlines.map((airline) => (
                       <option key={airline.id} value={airline.id}>
-                        {airline.name} (${airline.pricePerMile.toFixed(3)}/mile)
+                        {airline.name} (${airline.price_per_mile.toFixed(3)}/mile)
                       </option>
                     ))}
                   </select>
@@ -102,7 +168,7 @@ const MilesCalculator = () => {
                   <input
                     type="range"
                     id="miles"
-                    min={selectedAirline.minMiles}
+                    min={selectedAirline.min_miles}
                     max="250000"
                     step="1000"
                     value={milesAmount}
@@ -115,7 +181,7 @@ const MilesCalculator = () => {
                   />
 
                   <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>{formatNumber(selectedAirline.minMiles)}</span>
+                    <span>{formatNumber(selectedAirline.min_miles)}</span>
                     <span>250,000</span>
                   </div>
                 </div>
@@ -149,7 +215,7 @@ const MilesCalculator = () => {
                   <div className="flex justify-between pb-2 border-b border-gray-100">
                     <span className="text-gray-600">Rate</span>
                     <span className="font-medium text-navy">
-                      ${selectedAirline.pricePerMile.toFixed(3)}/mile
+                      ${selectedAirline.price_per_mile.toFixed(3)}/mile
                     </span>
                   </div>
                 </div>

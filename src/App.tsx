@@ -7,6 +7,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Reviews from "./pages/Reviews";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
+import DashboardLayout from "./components/admin/DashboardLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import Airlines from "./pages/admin/Airlines";
+import Leads from "./pages/admin/Leads";
+import Settings from "./pages/admin/Settings";
+import Login from "./pages/admin/Login";
+import RegisterAdmin from "./pages/admin/RegisterAdmin";
 
 const queryClient = new QueryClient();
 
@@ -16,12 +25,29 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/reviews" element={<Reviews />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/reviews" element={<Reviews />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<Login />} />
+            <Route path="/admin/register" element={<RegisterAdmin />} />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="airlines" element={<Airlines />} />
+              <Route path="leads" element={<Leads />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+            
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

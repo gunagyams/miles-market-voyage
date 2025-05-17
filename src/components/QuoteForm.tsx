@@ -1,48 +1,63 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { PartyPopper } from "lucide-react";
-import { 
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { supabase } from '@/integrations/supabase/client';
 
-// Sample airline data for form dropdown
-const airlines = [
-  { id: 1, name: 'Emirates Skywards' },
-  { id: 2, name: 'Etihad Guest' },
-  { id: 3, name: 'Qatar Privilege' },
-  { id: 4, name: 'Turkish Airlines' },
-  { id: 5, name: 'British Airways' },
-  { id: 6, name: 'Singapore Airlines' },
-];
+interface Airline {
+  id: string;
+  name: string;
+  price_per_mile: number;
+}
 
 const QuoteForm = () => {
   const { toast } = useToast();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [airlines, setAirlines] = useState<Airline[]>([]);
+  const [isLoadingAirlines, setIsLoadingAirlines] = useState(true);
   
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    airline: airlines[0].id,
+    airline: '',
     ffNumber: '',
     miles: 50000,
     whatsapp: '',
     email: '',
+    message: '',
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch airlines from Supabase
+  useEffect(() => {
+    const fetchAirlines = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('airlines')
+          .select('id, name, price_per_mile')
+          .order('name');
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setAirlines(data);
+          setFormData(prev => ({ ...prev, airline: data[0].name }));
+        }
+      } catch (error) {
+        console.error('Error fetching airlines:', error);
+      } finally {
+        setIsLoadingAirlines(false);
+      }
+    };
+
+    fetchAirlines();
+  }, []);
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     // For miles input, convert string to number
@@ -59,13 +74,24 @@ const QuoteForm = () => {
     }
   };
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Save lead to Supabase
+      const { error } = await supabase.from('leads').insert([{
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.whatsapp,
+        airline: formData.airline,
+        miles_amount: formData.miles,
+        message: formData.message,
+        status: 'new'
+      }]);
+      
+      if (error) throw error;
       
       // Show success dialog
       setIsSuccess(true);
@@ -74,18 +100,28 @@ const QuoteForm = () => {
       setFormData({
         firstName: '',
         lastName: '',
-        airline: airlines[0].id,
+        airline: airlines.length > 0 ? airlines[0].name : '',
         ffNumber: '',
         miles: 50000,
         whatsapp: '',
         email: '',
+        message: '',
       });
-    }, 1500);
+    } catch (error) {
+      console.error('Error submitting lead:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   // Calculate approximate price
-  const selectedAirline = airlines.find(a => a.id === formData.airline);
-  const airlinePricePerMile = 0.015; // This would come from your actual data
+  const selectedAirline = airlines.find(a => a.name === formData.airline);
+  const airlinePricePerMile = selectedAirline?.price_per_mile || 0.015; 
   const estimatedTotal = (formData.miles * airlinePricePerMile).toFixed(2);
 
   return (
@@ -142,12 +178,17 @@ const QuoteForm = () => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
+                    disabled={isLoadingAirlines}
                   >
-                    {airlines.map((airline) => (
-                      <option key={airline.id} value={airline.id}>
-                        {airline.name}
-                      </option>
-                    ))}
+                    {isLoadingAirlines ? (
+                      <option>Loading airlines...</option>
+                    ) : (
+                      airlines.map((airline) => (
+                        <option key={airline.id} value={airline.name}>
+                          {airline.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
                 
@@ -213,6 +254,19 @@ const QuoteForm = () => {
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
                     placeholder="your@email.com"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message (Optional)</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
+                    placeholder="Any additional information or questions..."
                   />
                 </div>
               </div>
