@@ -19,7 +19,7 @@ const Login = () => {
       if (user) {
         console.log("User already logged in, checking admin status");
         try {
-          // Use RPC function to avoid RLS recursion issues
+          // Make sure to use the correct function name 'is_user_admin'
           const { data: isAdmin, error } = await supabase.rpc(
             'is_user_admin',
             { user_id: user.id }

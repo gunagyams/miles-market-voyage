@@ -27,6 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
       try {
         // Use a database function call to avoid RLS recursion issues
+        // Make sure to use the correct function name 'is_user_admin'
         const { data: isUserAdmin, error } = await supabase.rpc(
           'is_user_admin',
           { user_id: user.id }
