@@ -26,12 +26,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       console.log("Verifying admin status for user:", user.id);
 
       try {
-        // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
-        const { data: adminData, error } = await supabase
-          .from("admin_users")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        // Use a database function call to avoid RLS recursion issues
+        const { data: isUserAdmin, error } = await supabase.rpc(
+          'is_user_admin',
+          { user_id: user.id }
+        );
 
         if (error) {
           console.error("Error checking admin status:", error);
@@ -42,8 +41,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           });
           setIsAdmin(false);
         } else {
-          console.log("Admin check result:", adminData);
-          setIsAdmin(!!adminData); // Convert to boolean
+          console.log("Admin check result:", isUserAdmin);
+          setIsAdmin(isUserAdmin); 
         }
       } catch (err) {
         console.error("Admin verification error:", err);

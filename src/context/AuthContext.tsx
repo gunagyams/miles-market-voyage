@@ -84,12 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("Sign in successful, user ID:", data.user.id);
 
       // The user exists in auth system, now check if they're in the admin_users table
-      // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
-      const { data: adminData, error: adminError } = await supabase
-        .from("admin_users")
-        .select("*")
-        .eq("id", data.user.id)
-        .single();
+      // Instead of using RLS which may cause recursion, use direct query without RLS checks
+      const { data: adminData, error: adminError } = await supabase.rpc(
+        'is_user_admin',
+        { user_id: data.user.id }
+      );
 
       if (adminError) {
         console.error("Admin check error:", adminError);
@@ -101,11 +100,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       }
 
-      console.log("Admin data found:", adminData);
+      console.log("Admin check result:", adminData);
       
-      // If no admin data was found, sign the user out
+      // If user is not an admin, sign out
       if (!adminData) {
-        console.error("No admin record found for user:", data.user.id);
+        console.error("User is not an admin:", data.user.id);
         // Sign out since this user is not an admin
         await supabase.auth.signOut();
         return { 

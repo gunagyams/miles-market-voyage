@@ -19,16 +19,15 @@ const Login = () => {
       if (user) {
         console.log("User already logged in, checking admin status");
         try {
-          // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
-          const { data, error } = await supabase
-            .from("admin_users")
-            .select("*")
-            .eq("id", user.id)
-            .single();
+          // Use RPC function to avoid RLS recursion issues
+          const { data: isAdmin, error } = await supabase.rpc(
+            'is_user_admin',
+            { user_id: user.id }
+          );
 
           if (error) {
             console.error("Error checking admin status:", error);
-          } else if (data) {
+          } else if (isAdmin) {
             console.log("User is admin, redirecting to dashboard");
             navigate("/admin/dashboard");
           } else {
