@@ -33,7 +33,14 @@ const Settings = () => {
         .eq("id", "contact_details")
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // Record not found, create it
+          await initializeSettings();
+          return;
+        }
+        throw error;
+      }
       
       // Properly cast the value to ContactDetails
       if (data && data.value) {
@@ -56,6 +63,35 @@ const Settings = () => {
     }
   };
 
+  const initializeSettings = async () => {
+    try {
+      const initialData = {
+        address: "",
+        phone: "",
+        email: ""
+      };
+
+      const { error } = await supabase
+        .from("site_settings")
+        .insert({ 
+          id: "contact_details", 
+          value: initialData as unknown as Json,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      setContactDetails(initialData);
+    } catch (error) {
+      console.error("Error initializing settings:", error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize contact details.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -68,6 +104,7 @@ const Settings = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      console.log("Saving contact details:", contactDetails);
       const { error } = await supabase
         .from("site_settings")
         .update({ 
@@ -76,7 +113,11 @@ const Settings = () => {
         })
         .eq("id", "contact_details");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
       toast({
         title: "Success",
         description: "Contact details updated successfully.",

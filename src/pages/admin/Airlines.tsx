@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -103,38 +104,41 @@ const Airlines = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Convert string values to appropriate types
+      const dataToSave = {
+        name: formValues.name,
+        logo: formValues.logo,
+        price_per_mile: Number(formValues.price_per_mile),
+        min_miles: Number(formValues.min_miles),
+        delivery_estimate: formValues.delivery_estimate,
+        updated_at: new Date().toISOString()
+      };
+      
       if (currentAirline) {
         // Update existing airline
         const { error } = await supabase
           .from("airlines")
-          .update({
-            name: formValues.name,
-            logo: formValues.logo,
-            price_per_mile: formValues.price_per_mile,
-            min_miles: formValues.min_miles,
-            delivery_estimate: formValues.delivery_estimate,
-            updated_at: new Date().toISOString(), // Convert Date to ISO string
-          })
+          .update(dataToSave)
           .eq("id", currentAirline.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
         toast({
           title: "Success",
           description: "Airline updated successfully.",
         });
       } else {
         // Add new airline
-        const { error } = await supabase.from("airlines").insert([
-          {
-            name: formValues.name,
-            logo: formValues.logo,
-            price_per_mile: formValues.price_per_mile,
-            min_miles: formValues.min_miles,
-            delivery_estimate: formValues.delivery_estimate,
-          },
-        ]);
+        const { error } = await supabase
+          .from("airlines")
+          .insert([dataToSave]);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
         toast({
           title: "Success",
           description: "Airline added successfully.",
@@ -262,7 +266,7 @@ const Airlines = () => {
 
       {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle>
               {currentAirline ? "Edit Airline" : "Add New Airline"}
@@ -356,7 +360,7 @@ const Airlines = () => {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle>Delete Airline</DialogTitle>
           </DialogHeader>

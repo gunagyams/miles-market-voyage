@@ -220,14 +220,14 @@ const Leads = () => {
             Filter by status:
           </label>
           <Select
-            value={statusFilter || ""}
+            value={statusFilter || undefined}
             onValueChange={(value) => setStatusFilter(value || null)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All statuses</SelectItem>
+              <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="new">New</SelectItem>
               <SelectItem value="contacted">Contacted</SelectItem>
               <SelectItem value="in progress">In Progress</SelectItem>
@@ -323,7 +323,7 @@ const Leads = () => {
 
       {/* View/Edit Dialog */}
       <Dialog open={viewDialog} onOpenChange={setViewDialog}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg bg-white">
           <DialogHeader>
             <DialogTitle>View Lead</DialogTitle>
           </DialogHeader>
@@ -389,7 +389,7 @@ const Leads = () => {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialog} onOpenChange={setDeleteDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <DialogTitle>Delete Lead</DialogTitle>
           </DialogHeader>
