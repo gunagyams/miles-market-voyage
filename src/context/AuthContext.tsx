@@ -54,6 +54,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("Attempting to sign in with email:", email);
+      
       // First, verify if the email is an allowed admin email before attempting sign in
       const allowedAdminEmails = [
         "cashmypoints@proton.me",
@@ -68,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       }
 
+      // Attempt to sign in
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -77,13 +80,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Authentication error:", error);
         return { success: false, error: error.message };
       }
+      
+      console.log("Sign in successful, user ID:", data.user.id);
 
       // The user exists in auth system, now check if they're in the admin_users table
+      // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
       const { data: adminData, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
         .eq("id", data.user.id)
-        .maybeSingle(); // Use maybeSingle instead of expecting an array
+        .single();
 
       if (adminError) {
         console.error("Admin check error:", adminError);
@@ -95,6 +101,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         };
       }
 
+      console.log("Admin data found:", adminData);
+      
+      // If no admin data was found, sign the user out
       if (!adminData) {
         console.error("No admin record found for user:", data.user.id);
         // Sign out since this user is not an admin

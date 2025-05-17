@@ -17,15 +17,25 @@ const Login = () => {
   useEffect(() => {
     const checkAdminAndRedirect = async () => {
       if (user) {
-        // Check if user is in admin_users table
-        const { data, error } = await supabase
-          .from("admin_users")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        console.log("User already logged in, checking admin status");
+        try {
+          // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
+          const { data, error } = await supabase
+            .from("admin_users")
+            .select("*")
+            .eq("id", user.id)
+            .single();
 
-        if (!error && data) {
-          navigate("/admin/dashboard");
+          if (error) {
+            console.error("Error checking admin status:", error);
+          } else if (data) {
+            console.log("User is admin, redirecting to dashboard");
+            navigate("/admin/dashboard");
+          } else {
+            console.log("User is not admin, staying on login page");
+          }
+        } catch (err) {
+          console.error("Admin verification error:", err);
         }
       }
     };
@@ -38,6 +48,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      console.log("Attempting to sign in with email:", email);
       const { success, error } = await signIn(email, password);
 
       if (success) {

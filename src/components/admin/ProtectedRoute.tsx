@@ -18,16 +18,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     const verifyAdminStatus = async () => {
       if (!user) {
+        console.log("No user found in protected route");
         setCheckingAdmin(false);
         return;
       }
 
+      console.log("Verifying admin status for user:", user.id);
+
       try {
+        // IMPORTANT: The column in admin_users table is 'id', not 'user_id'
         const { data: adminData, error } = await supabase
           .from("admin_users")
           .select("*")
           .eq("id", user.id)
-          .maybeSingle();
+          .single();
 
         if (error) {
           console.error("Error checking admin status:", error);
@@ -38,7 +42,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           });
           setIsAdmin(false);
         } else {
-          setIsAdmin(!!adminData);
+          console.log("Admin check result:", adminData);
+          setIsAdmin(!!adminData); // Convert to boolean
         }
       } catch (err) {
         console.error("Admin verification error:", err);
@@ -64,9 +69,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user || isAdmin === false) {
+    console.log("Access denied: user not authenticated or not an admin");
     return <Navigate to="/admin/login" replace />;
   }
 
+  console.log("Access granted: user is authenticated and is an admin");
   return <>{children}</>;
 };
 
