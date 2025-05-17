@@ -15,12 +15,21 @@ interface Airline {
   price_per_mile: number;
 }
 
+interface EmailSettings {
+  notifications_enabled: boolean;
+  admin_emails: string[];
+}
+
 const QuoteForm = () => {
   const { toast } = useToast();
   const [isSuccess, setIsSuccess] = useState(false);
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [isLoadingAirlines, setIsLoadingAirlines] = useState(true);
   const [phoneValid, setPhoneValid] = useState(true);
+  const [emailSettings, setEmailSettings] = useState<EmailSettings>({
+    notifications_enabled: true,
+    admin_emails: [],
+  });
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -58,7 +67,26 @@ const QuoteForm = () => {
       }
     };
 
+    const fetchEmailSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('id', 'email_settings')
+          .maybeSingle();
+        
+        if (error) throw error;
+        
+        if (data && data.value) {
+          setEmailSettings(data.value as EmailSettings);
+        }
+      } catch (error) {
+        console.error('Error fetching email settings:', error);
+      }
+    };
+
     fetchAirlines();
+    fetchEmailSettings();
   }, []);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -75,6 +103,39 @@ const QuoteForm = () => {
         ...formData,
         [name]: value,
       });
+    }
+  };
+
+  const sendEmailNotifications = async (leadData: any, estimatedTotal: string) => {
+    try {
+      const response = await fetch('https://qgzompfkqrfgjnbxwhip.supabase.co/functions/v1/send-lead-emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnem9tcGZrcXJmZ2puYnh3aGlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0NzIwMzEsImV4cCI6MjA2MzA0ODAzMX0.5nN4G3tNcf4QOJQ989B-I6gHPlll9y3nCWicDKbeZlI'}`,
+        },
+        body: JSON.stringify({
+          firstName: leadData.first_name,
+          lastName: leadData.last_name,
+          email: leadData.email,
+          phone: leadData.phone,
+          airline: leadData.airline,
+          miles: leadData.miles_amount,
+          estimatedTotal: estimatedTotal,
+          adminEmails: emailSettings.admin_emails,
+          notificationsEnabled: emailSettings.notifications_enabled
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (!result.success) {
+        console.error('Error sending emails:', result.error || result.errors);
+      } else {
+        console.log('Emails sent successfully:', result);
+      }
+    } catch (error) {
+      console.error('Error calling send-lead-emails function:', error);
     }
   };
   
@@ -94,8 +155,13 @@ const QuoteForm = () => {
     setIsSubmitting(true);
     
     try {
+      // Calculate estimated total for email
+      const selectedAirline = airlines.find(a => a.name === formData.airline);
+      const airlinePricePerMile = selectedAirline?.price_per_mile || 0.015; 
+      const estimatedTotal = (formData.miles * airlinePricePerMile).toFixed(2);
+
       // Save lead to Supabase
-      const { error } = await supabase.from('leads').insert([{
+      const leadData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
@@ -104,9 +170,14 @@ const QuoteForm = () => {
         miles_amount: formData.miles,
         message: formData.message,
         status: 'new'
-      }]);
+      };
+
+      const { error } = await supabase.from('leads').insert([leadData]);
       
       if (error) throw error;
+      
+      // Send email notifications
+      await sendEmailNotifications(leadData, estimatedTotal);
       
       // Show success dialog
       setIsSuccess(true);
