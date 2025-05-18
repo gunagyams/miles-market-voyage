@@ -63,17 +63,15 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // Get the verified domain email from environment
-    const verifiedDomainEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL") || "hi@cashmypoints.com";
-    console.log("Using verified domain email:", verifiedDomainEmail);
-    
-    // Configure from address
-    const fromEmail = verifiedDomainEmail;
+    // We'll use Resend's default sender email for testing since domain verification is causing issues
+    const fromEmail = "onboarding@resend.dev";
+    const fromName = "Cash My Points";
 
     // Send confirmation email to customer
     try {
+      console.log(`Attempting to send customer email to: ${email}`);
       const customerEmailResult = await resend.emails.send({
-        from: `Cash My Points <${fromEmail}>`,
+        from: `${fromName} <${fromEmail}>`,
         to: [email],
         subject: "Your Miles Purchase Request - Cash My Points",
         html: `
@@ -113,10 +111,11 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
       try {
-        // Send to all admin emails directly
+        // Send to all admin emails
         for (const adminEmail of adminEmails) {
+          console.log(`Attempting to send admin email to: ${adminEmail}`);
           const adminEmailResult = await resend.emails.send({
-            from: `Cash My Points <${fromEmail}>`,
+            from: `${fromName} <${fromEmail}>`,
             to: [adminEmail],
             subject: "New Lead Notification - Cash My Points",
             html: `

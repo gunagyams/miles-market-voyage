@@ -110,13 +110,23 @@ export const sendEmailNotifications = async (
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error response from send-lead-emails function:', errorText);
-      return {
-        success: false,
-        error: `Server returned ${response.status}: ${errorText}`,
-        testMode: false
-      };
+      try {
+        const errorData = await response.json();
+        console.error('Error response from send-lead-emails function:', errorData);
+        return {
+          success: false,
+          error: errorData.error || `Server returned ${response.status}`,
+          testMode: false
+        };
+      } catch (e) {
+        const errorText = await response.text();
+        console.error('Error parsing JSON response:', errorText);
+        return {
+          success: false,
+          error: `Server returned ${response.status}: ${errorText}`,
+          testMode: false
+        };
+      }
     }
 
     const result = await response.json();
@@ -126,7 +136,7 @@ export const sendEmailNotifications = async (
       console.error('Error sending emails:', result.error || result.errors);
       return { 
         success: false, 
-        error: result.error || (result.errors && result.errors[0]?.error),
+        error: result.error || (result.errors && result.errors.map(e => e.error).join(', ')),
         testMode: result.testMode 
       };
     } else {
