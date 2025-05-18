@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -53,8 +52,14 @@ const useSettingsData = () => {
         });
 
         if (contactData?.value) {
-          // Use type assertion to handle the JSON type safely
-          setContactDetails(contactData.value as ContactDetails);
+          // Use proper type assertion with unknown intermediary
+          const contactValue = contactData.value as Record<string, any>;
+          setContactDetails({
+            email: contactValue.email || "",
+            phone: contactValue.phone || "",
+            address: contactValue.address || "",
+            whatsapp: contactValue.whatsapp || "",
+          });
         }
 
         // Fetch email settings
@@ -68,8 +73,12 @@ const useSettingsData = () => {
         });
 
         if (emailData?.value) {
-          // Use type assertion to handle the JSON type safely
-          setEmailSettings(emailData.value as EmailSettings);
+          // Use proper type assertion with unknown intermediary
+          const emailValue = emailData.value as Record<string, any>;
+          setEmailSettings({
+            sendNotificationsToAdmin: emailValue.sendNotificationsToAdmin || false,
+            adminEmails: Array.isArray(emailValue.adminEmails) ? emailValue.adminEmails : [],
+          });
         }
 
         // Fetch airline settings
@@ -83,8 +92,11 @@ const useSettingsData = () => {
         });
 
         if (airlineData?.value) {
-          // Use type assertion to handle the JSON type safely
-          setAirlineSettings(airlineData.value as AirlineSettings);
+          // Use proper type assertion with unknown intermediary
+          const airlineValue = airlineData.value as Record<string, any>;
+          setAirlineSettings({
+            isAvailable: Boolean(airlineValue.isAvailable),
+          });
         } else {
           // If no airline settings exist, create default one
           await safeSupabaseOperation(async () => {
