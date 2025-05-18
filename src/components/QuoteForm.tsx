@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PartyPopper, Check, X } from "lucide-react";
+import { PartyPopper, Check, X, AlertCircle } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -22,6 +22,8 @@ interface EmailSettings {
 const QuoteForm = () => {
   const { toast } = useToast();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isTestMode, setIsTestMode] = useState(false);
+  const [testModeInfo, setTestModeInfo] = useState<string>("");
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [isLoadingAirlines, setIsLoadingAirlines] = useState(true);
   const [phoneValid, setPhoneValid] = useState(true);
@@ -135,11 +137,19 @@ const QuoteForm = () => {
       
       if (!result.success) {
         console.error('Error sending emails:', result.error || result.errors);
+        return { success: false, error: result.error || (result.errors && result.errors[0]?.error) };
       } else {
         console.log('Emails sent successfully:', result);
+        if (result.testMode) {
+          setIsTestMode(true);
+          setTestModeInfo(`Note: You're in test mode because your domain is not verified in Resend. 
+            Emails were sent to the test address instead of actual recipients.`);
+        }
+        return { success: true };
       }
     } catch (error) {
       console.error('Error calling send-lead-emails function:', error);
+      return { success: false, error: error.message };
     }
   };
   
@@ -181,7 +191,15 @@ const QuoteForm = () => {
       if (error) throw error;
       
       // Send email notifications
-      await sendEmailNotifications(leadData, estimatedTotal);
+      const emailResult = await sendEmailNotifications(leadData, estimatedTotal);
+      
+      if (!emailResult.success) {
+        toast({
+          title: "Email Notification Warning",
+          description: `Your order was submitted, but email notifications could not be sent: ${emailResult.error}`,
+          variant: "destructive",
+        });
+      }
       
       // Show success dialog
       setIsSuccess(true);
@@ -441,6 +459,20 @@ const QuoteForm = () => {
               <span className="font-bold"> 2 hours </span> 
               to complete your order.
             </p>
+            
+            {isTestMode && (
+              <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-md text-left">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
+                  <div className="text-sm text-amber-800">
+                    <p className="font-medium mb-1">Test Mode Active</p>
+                    <p>{testModeInfo}</p>
+                    <p className="mt-2">To send real emails, please verify your domain in your Resend account.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="confetti-animation">
               {Array.from({ length: 50 }).map((_, i) => (
                 <div 
