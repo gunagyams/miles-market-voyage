@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { Check, X } from 'lucide-react';
+import { Check, X, Info } from 'lucide-react';
 import { Airline } from '@/utils/quoteUtils';
 
 interface FormFieldsProps {
@@ -106,9 +106,12 @@ const FormFields: React.FC<FormFieldsProps> = ({
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
             placeholder="Your frequent flyer number"
           />
-          <p className="text-xs text-amber-600 mt-1 italic">
-            Please ensure your frequent flyer number matches the name in your airline account records.
-          </p>
+          <div className="mt-2 p-2 bg-amber-50 border border-amber-100 rounded-md flex items-start space-x-2 text-xs">
+            <Info className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+            <span className="text-amber-700">
+              Please ensure your frequent flyer number matches the name in your airline account records.
+            </span>
+          </div>
         </div>
         
         <div>

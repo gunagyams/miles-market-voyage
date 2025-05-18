@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -17,7 +18,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Trash2, Eye, Download } from "lucide-react";
+import { Trash2, Eye, Download, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { saveAs } from 'file-saver';
 import { utils, writeFile } from 'xlsx';
 
@@ -43,12 +45,14 @@ interface Lead {
 
 const Leads = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [viewDialog, setViewDialog] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [currentLead, setCurrentLead] = useState<Lead | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { toast } = useToast();
 
@@ -67,7 +71,9 @@ const Leads = () => {
       });
 
       console.log("Fetched leads:", data);
-      setLeads(data as Lead[] || []);
+      const fetchedLeads = data as Lead[] || [];
+      setLeads(fetchedLeads);
+      setFilteredLeads(fetchedLeads);
     } catch (error: any) {
       console.error("Error fetching leads:", error);
       toast({
@@ -83,6 +89,25 @@ const Leads = () => {
   useEffect(() => {
     fetchLeads();
   }, [statusFilter]);
+
+  // Handle search functionality
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredLeads(leads);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = leads.filter(lead => 
+      lead.first_name.toLowerCase().includes(query) || 
+      lead.last_name.toLowerCase().includes(query) || 
+      lead.email.toLowerCase().includes(query) || 
+      (lead.airline && lead.airline.toLowerCase().includes(query)) || 
+      (lead.phone && lead.phone.toLowerCase().includes(query))
+    );
+    
+    setFilteredLeads(filtered);
+  }, [searchQuery, leads]);
 
   const openViewDialog = (lead: Lead) => {
     setCurrentLead(lead);
@@ -224,36 +249,48 @@ const Leads = () => {
         <p className="text-gray-500">View and manage customer inquiries</p>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <label htmlFor="statusFilter" className="text-sm font-medium">
-            Filter by status:
-          </label>
-          <Select
-            value={statusFilter || "all"}
-            onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="contacted">Contacted</SelectItem>
-              <SelectItem value="in progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            placeholder="Search by name, email, phone, or airline..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10"
+          />
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={fetchLeads}>
-            Refresh
-          </Button>
-          <Button variant="outline" onClick={exportToExcel} className="flex items-center gap-1">
-            <Download className="h-4 w-4" />
-            Export to Excel
-          </Button>
+        
+        <div className="flex flex-col md:flex-row gap-3 items-center">
+          <div className="flex items-center gap-2">
+            <label htmlFor="statusFilter" className="text-sm font-medium whitespace-nowrap">
+              Filter by status:
+            </label>
+            <Select
+              value={statusFilter || "all"}
+              onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="contacted">Contacted</SelectItem>
+                <SelectItem value="in progress">In Progress</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2 ml-auto md:ml-0">
+            <Button variant="outline" onClick={fetchLeads}>
+              Refresh
+            </Button>
+            <Button variant="outline" onClick={exportToExcel} className="flex items-center gap-1">
+              <Download className="h-4 w-4" />
+              Export to Excel
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -283,14 +320,14 @@ const Leads = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leads.length === 0 ? (
+              {filteredLeads.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-6">
-                    No leads found.
+                    {searchQuery ? "No leads found matching your search." : "No leads found."}
                   </TableCell>
                 </TableRow>
               ) : (
-                leads.map((lead) => (
+                filteredLeads.map((lead) => (
                   <TableRow key={lead.id}>
                     <TableCell>{formatDate(lead.created_at)}</TableCell>
                     <TableCell>{`${lead.first_name} ${lead.last_name}`}</TableCell>
