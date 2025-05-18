@@ -63,8 +63,8 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // Use your verified domain (from cashmypoints.com)
-    const fromEmail = "hi@cashmypoints.com";
+    // Use Resend's default sender which is guaranteed to work
+    const fromEmail = "onboarding@resend.dev";
     const fromName = "Cash My Points";
 
     // Send confirmation email to customer
@@ -110,53 +110,51 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
-      // Send each admin email individually to avoid exposing other admin emails
-      for (const adminEmail of adminEmails) {
-        try {
-          console.log(`Attempting to send admin email to: ${adminEmail}`);
-          const adminEmailResult = await resend.emails.send({
-            from: `${fromName} <${fromEmail}>`,
-            to: [adminEmail],
-            subject: "New Lead Notification - Cash My Points",
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                  <h1 style="color: #0f172a;">New Lead Notification</h1>
-                </div>
-                <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
-                  <h2 style="color: #0f172a;">New Miles Purchase Request</h2>
-                  <p><strong>Customer Details:</strong></p>
-                  <ul style="list-style-type: none; padding-left: 0;">
-                    <li><strong>Name:</strong> ${firstName} ${lastName}</li>
-                    <li><strong>Email:</strong> ${email}</li>
-                    <li><strong>Phone:</strong> ${phone}</li>
-                  </ul>
-                  <p><strong>Order Details:</strong></p>
-                  <ul style="list-style-type: none; padding-left: 0;">
-                    <li><strong>Airline:</strong> ${airline}</li>
-                    <li><strong>Miles Amount:</strong> ${miles.toLocaleString()}</li>
-                    <li><strong>Estimated Total:</strong> $${estimatedTotal}</li>
-                  </ul>
-                </div>
-                <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
-                  <p>Please log in to the admin dashboard to view and manage this lead.</p>
-                </div>
+      try {
+        // Send to all admin emails at once to simplify the process
+        console.log(`Attempting to send admin emails to: ${adminEmails.join(", ")}`);
+        const adminEmailResult = await resend.emails.send({
+          from: `${fromName} <${fromEmail}>`,
+          to: adminEmails,
+          subject: "New Lead Notification - Cash My Points",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
+              <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="color: #0f172a;">New Lead Notification</h1>
               </div>
-            `,
-          });
-          
-          console.log(`Admin email result for ${adminEmail}:`, adminEmailResult);
-          
-          if (adminEmailResult.error) {
-            throw new Error(`Admin email error: ${adminEmailResult.error.message}`);
-          } else {
-            console.log("Admin email sent successfully to:", adminEmail);
-            successCount++;
-          }
-        } catch (error) {
-          console.error(`Error sending admin email to ${adminEmail}:`, error);
-          errors.push({ type: "admin", error: error.message });
+              <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+                <h2 style="color: #0f172a;">New Miles Purchase Request</h2>
+                <p><strong>Customer Details:</strong></p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                  <li><strong>Name:</strong> ${firstName} ${lastName}</li>
+                  <li><strong>Email:</strong> ${email}</li>
+                  <li><strong>Phone:</strong> ${phone}</li>
+                </ul>
+                <p><strong>Order Details:</strong></p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                  <li><strong>Airline:</strong> ${airline}</li>
+                  <li><strong>Miles Amount:</strong> ${miles.toLocaleString()}</li>
+                  <li><strong>Estimated Total:</strong> $${estimatedTotal}</li>
+                </ul>
+              </div>
+              <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
+                <p>Please log in to the admin dashboard to view and manage this lead.</p>
+              </div>
+            </div>
+          `,
+        });
+        
+        console.log("Admin emails result:", adminEmailResult);
+        
+        if (adminEmailResult.error) {
+          throw new Error(`Admin email error: ${adminEmailResult.error.message}`);
+        } else {
+          console.log("Admin emails sent successfully to:", adminEmails.join(", "));
+          successCount++;
         }
+      } catch (error) {
+        console.error("Error sending admin emails:", error);
+        errors.push({ type: "admin", error: error.message });
       }
     } else {
       console.log("No admin emails configured, skipping admin notification");

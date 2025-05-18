@@ -113,10 +113,21 @@ export const sendEmailNotifications = async (
       try {
         const errorData = await response.json();
         console.error('Error response from send-lead-emails function:', errorData);
+        
+        // Check for detailed error messages
+        let errorMessage = `Server returned ${response.status}`;
+        if (errorData.error) {
+          errorMessage += `: ${errorData.error}`;
+        } else if (errorData.errors && errorData.errors.length > 0) {
+          // Format all error messages from the errors array
+          const errorMessages = errorData.errors.map((e: any) => `${e.type}: ${e.error}`).join("; ");
+          errorMessage += `: ${errorMessages}`;
+        }
+        
         return {
           success: false,
-          error: errorData.error || `Server returned ${response.status}`,
-          testMode: false
+          error: errorMessage,
+          testMode: errorData.testMode || false
         };
       } catch (e) {
         const errorText = await response.text();
@@ -136,7 +147,7 @@ export const sendEmailNotifications = async (
       console.error('Error sending emails:', result.error || result.errors);
       return { 
         success: false, 
-        error: result.error || (result.errors && result.errors.map(e => e.error).join(', ')),
+        error: result.error || (result.errors && result.errors.map((e: any) => e.error).join(', ')),
         testMode: result.testMode 
       };
     } else {
@@ -146,7 +157,7 @@ export const sendEmailNotifications = async (
         testMode: result.testMode 
       };
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error calling send-lead-emails function:', error);
     return { 
       success: false, 
