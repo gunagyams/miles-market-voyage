@@ -69,15 +69,15 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // Use Resend's default sender which is guaranteed to work
-    const fromEmail = "onboarding@resend.dev";
+    // Use your verified domain email which is set in the environment variable
+    const verifiedEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL") || "hi@cashmypoints.com";
     const fromName = "Cash My Points";
 
     // Send confirmation email to customer
     try {
-      console.log(`Attempting to send customer email to: ${email}`);
+      console.log(`Attempting to send customer email to: ${email} from: ${verifiedEmail}`);
       const customerEmailResult = await resend.emails.send({
-        from: `${fromName} <${fromEmail}>`,
+        from: `${fromName} <${verifiedEmail}>`,
         to: [email],
         subject: "Your Miles Purchase Request - Cash My Points",
         html: `
@@ -110,7 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
         successCount++;
       }
     } catch (error) {
-      console.error("Error sending customer email:", error);
+      console.error(`Error sending customer email to ${email}:`, error);
       errors.push({ type: "customer", error: error.message });
     }
 
@@ -118,9 +118,9 @@ const handler = async (req: Request): Promise<Response> => {
     if (adminEmails && adminEmails.length > 0) {
       try {
         // Send to all admin emails at once to simplify the process
-        console.log(`Attempting to send admin emails to: ${adminEmails.join(", ")}`);
+        console.log(`Attempting to send admin emails to: ${adminEmails.join(", ")} from: ${verifiedEmail}`);
         const adminEmailResult = await resend.emails.send({
-          from: `${fromName} <${fromEmail}>`,
+          from: `${fromName} <${verifiedEmail}>`,
           to: adminEmails,
           subject: "New Lead Notification - Cash My Points",
           html: `
@@ -159,7 +159,7 @@ const handler = async (req: Request): Promise<Response> => {
           successCount++;
         }
       } catch (error) {
-        console.error("Error sending admin emails:", error);
+        console.error(`Error sending admin emails to ${adminEmails.join(", ")}:`, error);
         errors.push({ type: "admin", error: error.message });
       }
     } else {
