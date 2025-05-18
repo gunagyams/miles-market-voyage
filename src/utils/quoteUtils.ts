@@ -73,6 +73,11 @@ export const sendEmailNotifications = async (
   emailSettings: EmailSettings
 ) => {
   try {
+    // Check if we have admin emails configured
+    if (!emailSettings.admin_emails || emailSettings.admin_emails.length === 0) {
+      console.warn('No admin emails configured. Admin notifications will not be sent.');
+    }
+    
     const response = await fetch('https://qgzompfkqrfgjnbxwhip.supabase.co/functions/v1/send-lead-emails', {
       method: 'POST',
       headers: {
@@ -91,6 +96,16 @@ export const sendEmailNotifications = async (
         notificationsEnabled: emailSettings.notifications_enabled
       }),
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error response from send-lead-emails function:', errorText);
+      return {
+        success: false,
+        error: `Server returned ${response.status}: ${errorText}`,
+        testMode: false
+      };
+    }
 
     const result = await response.json();
     

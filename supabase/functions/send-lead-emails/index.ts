@@ -63,19 +63,23 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // In test mode (no verified domain), send emails only to the designated test address
-    const isTestMode = !Deno.env.get("VERIFIED_DOMAIN_EMAIL");
-    const testEmailAddress = "xemih40638@magpit.com"; // Resend's designated test email
-    const fromEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL") || "noreply@resend.dev";
+    // Get the verified domain from environment or fallback to resend.dev
+    const verifiedDomainEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL");
+    
+    // Check if we have a verified domain
+    const isTestMode = !verifiedDomainEmail;
+    
+    // Configure from address based on verification status
+    const fromEmail = verifiedDomainEmail || "noreply@resend.dev";
     
     console.log(`Email mode: ${isTestMode ? 'TEST' : 'PRODUCTION'}`);
     console.log(`From email: ${fromEmail}`);
 
-    // Send confirmation email to customer (or test email in test mode)
+    // Send confirmation email to customer
     try {
       const customerEmail = await resend.emails.send({
-        from: fromEmail,
-        to: [isTestMode ? testEmailAddress : email],
+        from: `Cash My Points <${fromEmail}>`,
+        to: [email],
         subject: "Your Miles Purchase Request - Cash My Points",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
@@ -101,7 +105,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.log("Customer email sent:", customerEmail);
       successCount++;
       
-      // If in test mode, also log what would have been sent
+      // Log what would have been sent in test mode
       if (isTestMode) {
         console.log(`Would have sent customer email to: ${email}`);
       }
@@ -110,13 +114,14 @@ const handler = async (req: Request): Promise<Response> => {
       errors.push({ type: "customer", error: error.message });
     }
 
-    // Send notification emails to admins if there are any admin emails configured
+    // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
       try {
+        // In production mode, send to first admin directly and BCC others
         const adminEmail = await resend.emails.send({
-          from: fromEmail,
-          to: [isTestMode ? testEmailAddress : adminEmails[0]], // In production mode, send to first admin
-          bcc: isTestMode ? [] : adminEmails.slice(1), // In production mode, BCC other admins
+          from: `Cash My Points <${fromEmail}>`,
+          to: [adminEmails[0]], // First admin gets direct email
+          bcc: adminEmails.slice(1), // Other admins are BCC'd
           subject: "New Lead Notification - Cash My Points",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
@@ -148,7 +153,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.log("Admin email sent:", adminEmail);
         successCount++;
         
-        // If in test mode, also log what would have been sent
+        // Log what would have been sent in test mode
         if (isTestMode) {
           console.log(`Would have sent admin emails to: ${adminEmails.join(", ")}`);
         }
