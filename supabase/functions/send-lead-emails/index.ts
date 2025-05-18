@@ -95,14 +95,20 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
               <p>We appreciate your business and look forward to helping you with your miles purchase!</p>
-              <p>Best regards,<br>The Cash My Points Team</p>
+              <p>Best regards,</p>
+              <div style="margin-top: 15px;">
+                <p style="font-weight: 500; color: #0f172a; margin-bottom: 5px;">Tanya M. | Sr. Accounts Executive</p>
+                <p style="color: #6b7280; font-size: 12px; margin-bottom: 5px;">Office Address: Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE</p>
+                <p style="color: #6b7280; font-size: 12px; margin-bottom: 15px;">Phone Number: <a href="tel:+971529581786" style="color: #1d4ed8; text-decoration: none;">+971 529581786</a></p>
+                <p style="color: #6b7280; font-size: 13px; font-style: italic; margin-bottom: 15px;">Trusted by 5000+ travelers</p>
+                <a href="https://www.trustpilot.com/review/cashmypoint.com" style="display: inline-block; margin-bottom: 10px;">
+                  <img src="https://cdn.trustpilot.net/brand-assets/1.1.0/logo-white.svg" alt="Trustpilot" style="height: 25px; background-color: #00b67a; padding: 5px; border-radius: 4px;">
+                  <span style="color: #1d4ed8; text-decoration: underline; font-size: 13px; margin-left: 5px; vertical-align: top;">See our reviews on Trustpilot</span>
+                </a>
+              </div>
             </div>
             <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center; background-color: #ffffff; margin-top: 30px;">
-              <p style="font-weight: 500; color: #0f172a; margin-bottom: 5px;">Tanya M. | Sr. Accounts Executive</p>
-              <p style="color: #6b7280; font-size: 12px; margin-bottom: 5px;">Office Address: Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE</p>
-              <p style="color: #6b7280; font-size: 12px; margin-bottom: 15px;">Phone Number: +971 529581786</p>
-              <p style="color: #6b7280; font-size: 13px; font-style: italic; margin-bottom: 15px;">Trusted by 5000+ travelers</p>
-              <a href="https://www.trustpilot.com/review/cashmypoint.com" style="color: #1d4ed8; text-decoration: underline; font-size: 13px;">See our reviews on Trustpilot</a>
+              <p style="color: #6b7280; font-size: 12px;">© ${new Date().getFullYear()} Cash My Points. All rights reserved.</p>
             </div>
           </div>
         `,
@@ -142,7 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
                   <li><strong>First Name:</strong> ${firstName}</li>
                   <li><strong>Last Name:</strong> ${lastName}</li>
                   <li><strong>Email:</strong> ${email}</li>
-                  <li><strong>Phone:</strong> ${phone}</li>
+                  <li><strong>Phone:</strong> +${phone}</li>
                 </ul>
                 <p><strong>Order Details:</strong></p>
                 <ul style="list-style-type: none; padding-left: 0;">

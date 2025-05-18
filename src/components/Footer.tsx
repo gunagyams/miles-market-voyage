@@ -51,10 +51,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <div className="flex items-center mb-4">
-              <div className="flex items-center py-3 bg-white">
+              <div className="flex items-center py-3 bg-navy">
                 <img
-                  src="/img/CMP.png"
-                  className="w-[100px] h-auto max-h-[60px]"
+                  src="/lovable-uploads/f6aff015-3335-42a4-a11e-3dfdebc022e9.png"
+                  className="w-[160px] h-auto max-h-[60px]"
                   alt="Cash My Points Logo"
                 />
               </div>
