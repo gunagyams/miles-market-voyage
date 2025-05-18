@@ -90,7 +90,11 @@ export const sendEmailNotifications = async (
       notificationsEnabled: emailSettings.notifications_enabled
     });
     
-    const response = await fetch('https://qgzompfkqrfgjnbxwhip.supabase.co/functions/v1/send-lead-emails', {
+    const supabaseUrl = 'https://qgzompfkqrfgjnbxwhip.supabase.co';
+    const endpoint = `${supabaseUrl}/functions/v1/send-lead-emails`;
+    console.log('Sending request to:', endpoint);
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -114,7 +118,7 @@ export const sendEmailNotifications = async (
         const errorData = await response.json();
         console.error('Error response from send-lead-emails function:', errorData);
         
-        // Check for detailed error messages
+        // Enhanced error logging
         let errorMessage = `Server returned ${response.status}`;
         if (errorData.error) {
           errorMessage += `: ${errorData.error}`;
@@ -122,6 +126,14 @@ export const sendEmailNotifications = async (
           // Format all error messages from the errors array
           const errorMessages = errorData.errors.map((e: any) => `${e.type}: ${e.error}`).join("; ");
           errorMessage += `: ${errorMessages}`;
+        }
+        
+        // Log API key info if available
+        if (errorData.apiKeyUsed) {
+          console.log('API key used had prefix:', errorData.apiKeyUsed);
+        }
+        if (errorData.apiKeyPresent === false) {
+          console.error('CRITICAL ERROR: Edge function reported no API key configured');
         }
         
         return {

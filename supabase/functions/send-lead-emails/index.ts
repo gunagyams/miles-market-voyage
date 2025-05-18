@@ -9,6 +9,8 @@ if (!resendApiKey) {
 }
 const resend = new Resend(resendApiKey);
 
+console.log("Resend initialized with API key:", resendApiKey ? "API key is set" : "API key is missing");
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -36,12 +38,16 @@ const handler = async (req: Request): Promise<Response> => {
     const payload: LeadEmailRequest = await req.json();
     const { firstName, lastName, email, phone, airline, miles, estimatedTotal, adminEmails, notificationsEnabled } = payload;
     
-    console.log("Received lead email request:", payload);
+    console.log("Received lead email request with data:", payload);
     console.log("Resend API key configured:", resendApiKey ? "Yes" : "No");
     
     if (!resendApiKey) {
       return new Response(
-        JSON.stringify({ success: false, message: "RESEND_API_KEY is not configured" }),
+        JSON.stringify({ 
+          success: false, 
+          error: "RESEND_API_KEY is not configured",
+          apiKeyPresent: false
+        }),
         {
           status: 500,
           headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -165,7 +171,8 @@ const handler = async (req: Request): Promise<Response> => {
         success: successCount > 0,
         sent: successCount,
         errors: errors.length > 0 ? errors : undefined,
-        testMode: false
+        testMode: false,
+        apiKeyUsed: resendApiKey ? resendApiKey.substring(0, 5) + "..." : "none"
       }),
       {
         status: successCount > 0 ? 200 : 500,
@@ -175,7 +182,11 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-lead-emails function:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message,
+        apiKeyUsed: resendApiKey ? resendApiKey.substring(0, 5) + "..." : "none"
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
