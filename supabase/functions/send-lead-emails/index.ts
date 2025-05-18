@@ -88,9 +88,10 @@ const handler = async (req: Request): Promise<Response> => {
               <p>We've received your request to purchase ${miles.toLocaleString()} ${airline} miles.</p>
               <p>A member of our team will contact you within the next <strong>2 hours</strong> to complete your order.</p>
               <p>Your estimated total: <strong>$${estimatedTotal}</strong></p>
+              <p>If you have any questions before we reach out, feel free to reply to this email.</p>
             </div>
             <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
-              <p>If you have any questions, please reply to this email or contact us directly.</p>
+              <p>We appreciate your business and look forward to helping you with your miles purchase!</p>
               <p>Best regards,<br>The Cash My Points Team</p>
             </div>
           </div>
