@@ -63,21 +63,16 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // Get the verified domain from environment or fallback to resend.dev
-    const verifiedDomainEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL");
+    // Get the verified domain email from environment
+    const verifiedDomainEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL") || "hi@cashmypoints.com";
+    console.log("Using verified domain email:", verifiedDomainEmail);
     
-    // Check if we have a verified domain
-    const isTestMode = !verifiedDomainEmail;
-    
-    // Configure from address based on verification status
-    const fromEmail = verifiedDomainEmail || "noreply@resend.dev";
-    
-    console.log(`Email mode: ${isTestMode ? 'TEST' : 'PRODUCTION'}`);
-    console.log(`From email: ${fromEmail}`);
+    // Configure from address
+    const fromEmail = verifiedDomainEmail;
 
     // Send confirmation email to customer
     try {
-      const customerEmail = await resend.emails.send({
+      const customerEmailResult = await resend.emails.send({
         from: `Cash My Points <${fromEmail}>`,
         to: [email],
         subject: "Your Miles Purchase Request - Cash My Points",
@@ -102,12 +97,13 @@ const handler = async (req: Request): Promise<Response> => {
         `,
       });
       
-      console.log("Customer email sent:", customerEmail);
-      successCount++;
+      console.log("Customer email result:", customerEmailResult);
       
-      // Log what would have been sent in test mode
-      if (isTestMode) {
-        console.log(`Would have sent customer email to: ${email}`);
+      if (customerEmailResult.error) {
+        throw new Error(`Customer email error: ${customerEmailResult.error.message}`);
+      } else {
+        console.log("Customer email sent successfully to:", email);
+        successCount++;
       }
     } catch (error) {
       console.error("Error sending customer email:", error);
@@ -117,45 +113,47 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
       try {
-        // In production mode, send to first admin directly and BCC others
-        const adminEmail = await resend.emails.send({
-          from: `Cash My Points <${fromEmail}>`,
-          to: [adminEmails[0]], // First admin gets direct email
-          bcc: adminEmails.slice(1), // Other admins are BCC'd
-          subject: "New Lead Notification - Cash My Points",
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
-              <div style="text-align: center; margin-bottom: 20px;">
-                <h1 style="color: #0f172a;">New Lead Notification</h1>
+        // Send to all admin emails directly
+        for (const adminEmail of adminEmails) {
+          const adminEmailResult = await resend.emails.send({
+            from: `Cash My Points <${fromEmail}>`,
+            to: [adminEmail],
+            subject: "New Lead Notification - Cash My Points",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                  <h1 style="color: #0f172a;">New Lead Notification</h1>
+                </div>
+                <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+                  <h2 style="color: #0f172a;">New Miles Purchase Request</h2>
+                  <p><strong>Customer Details:</strong></p>
+                  <ul style="list-style-type: none; padding-left: 0;">
+                    <li><strong>Name:</strong> ${firstName} ${lastName}</li>
+                    <li><strong>Email:</strong> ${email}</li>
+                    <li><strong>Phone:</strong> ${phone}</li>
+                  </ul>
+                  <p><strong>Order Details:</strong></p>
+                  <ul style="list-style-type: none; padding-left: 0;">
+                    <li><strong>Airline:</strong> ${airline}</li>
+                    <li><strong>Miles Amount:</strong> ${miles.toLocaleString()}</li>
+                    <li><strong>Estimated Total:</strong> $${estimatedTotal}</li>
+                  </ul>
+                </div>
+                <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
+                  <p>Please log in to the admin dashboard to view and manage this lead.</p>
+                </div>
               </div>
-              <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
-                <h2 style="color: #0f172a;">New Miles Purchase Request</h2>
-                <p><strong>Customer Details:</strong></p>
-                <ul style="list-style-type: none; padding-left: 0;">
-                  <li><strong>Name:</strong> ${firstName} ${lastName}</li>
-                  <li><strong>Email:</strong> ${email}</li>
-                  <li><strong>Phone:</strong> ${phone}</li>
-                </ul>
-                <p><strong>Order Details:</strong></p>
-                <ul style="list-style-type: none; padding-left: 0;">
-                  <li><strong>Airline:</strong> ${airline}</li>
-                  <li><strong>Miles Amount:</strong> ${miles.toLocaleString()}</li>
-                  <li><strong>Estimated Total:</strong> $${estimatedTotal}</li>
-                </ul>
-              </div>
-              <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
-                <p>Please log in to the admin dashboard to view and manage this lead.</p>
-              </div>
-            </div>
-          `,
-        });
-        
-        console.log("Admin email sent:", adminEmail);
-        successCount++;
-        
-        // Log what would have been sent in test mode
-        if (isTestMode) {
-          console.log(`Would have sent admin emails to: ${adminEmails.join(", ")}`);
+            `,
+          });
+          
+          console.log(`Admin email result for ${adminEmail}:`, adminEmailResult);
+          
+          if (adminEmailResult.error) {
+            throw new Error(`Admin email error: ${adminEmailResult.error.message}`);
+          } else {
+            console.log("Admin email sent successfully to:", adminEmail);
+            successCount++;
+          }
         }
       } catch (error) {
         console.error("Error sending admin email:", error);
@@ -170,7 +168,7 @@ const handler = async (req: Request): Promise<Response> => {
         success: successCount > 0,
         sent: successCount,
         errors: errors.length > 0 ? errors : undefined,
-        testMode: isTestMode
+        testMode: false
       }),
       {
         status: successCount > 0 ? 200 : 500,

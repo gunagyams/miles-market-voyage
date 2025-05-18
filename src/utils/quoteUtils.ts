@@ -78,6 +78,18 @@ export const sendEmailNotifications = async (
       console.warn('No admin emails configured. Admin notifications will not be sent.');
     }
     
+    console.log('Sending email notifications with data:', {
+      firstName: leadData.first_name,
+      lastName: leadData.last_name,
+      email: leadData.email,
+      phone: leadData.phone,
+      airline: leadData.airline,
+      miles: leadData.miles_amount,
+      estimatedTotal: estimatedTotal,
+      adminEmails: emailSettings.admin_emails,
+      notificationsEnabled: emailSettings.notifications_enabled
+    });
+    
     const response = await fetch('https://qgzompfkqrfgjnbxwhip.supabase.co/functions/v1/send-lead-emails', {
       method: 'POST',
       headers: {
@@ -108,6 +120,7 @@ export const sendEmailNotifications = async (
     }
 
     const result = await response.json();
+    console.log('Email notification result:', result);
     
     if (!result.success) {
       console.error('Error sending emails:', result.error || result.errors);
