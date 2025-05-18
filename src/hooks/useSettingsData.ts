@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Json } from "@/integrations/supabase/types";
 
 interface ContactDetails {
   email: string;
@@ -52,7 +53,8 @@ const useSettingsData = () => {
         });
 
         if (contactData?.value) {
-          setContactDetails(contactData.value);
+          // Use type assertion to handle the JSON type safely
+          setContactDetails(contactData.value as ContactDetails);
         }
 
         // Fetch email settings
@@ -66,7 +68,8 @@ const useSettingsData = () => {
         });
 
         if (emailData?.value) {
-          setEmailSettings(emailData.value);
+          // Use type assertion to handle the JSON type safely
+          setEmailSettings(emailData.value as EmailSettings);
         }
 
         // Fetch airline settings
@@ -80,13 +83,14 @@ const useSettingsData = () => {
         });
 
         if (airlineData?.value) {
-          setAirlineSettings(airlineData.value);
+          // Use type assertion to handle the JSON type safely
+          setAirlineSettings(airlineData.value as AirlineSettings);
         } else {
           // If no airline settings exist, create default one
           await safeSupabaseOperation(async () => {
             return supabase
               .from("site_settings")
-              .insert({ id: "airline", value: { isAvailable: true } });
+              .insert({ id: "airline", value: { isAvailable: true } as Json });
           });
         }
 
@@ -150,7 +154,10 @@ const useSettingsData = () => {
       await safeSupabaseOperation(async () => {
         const response = await supabase
           .from("site_settings")
-          .upsert({ id: "contact", value: contactDetails });
+          .upsert({ 
+            id: "contact", 
+            value: contactDetails as unknown as Json 
+          });
         return response;
       });
 
@@ -176,7 +183,10 @@ const useSettingsData = () => {
       await safeSupabaseOperation(async () => {
         const response = await supabase
           .from("site_settings")
-          .upsert({ id: "email", value: emailSettings });
+          .upsert({ 
+            id: "email", 
+            value: emailSettings as unknown as Json 
+          });
         return response;
       });
 
@@ -202,7 +212,10 @@ const useSettingsData = () => {
       await safeSupabaseOperation(async () => {
         const response = await supabase
           .from("site_settings")
-          .upsert({ id: "airline", value: airlineSettings });
+          .upsert({ 
+            id: "airline", 
+            value: airlineSettings as unknown as Json 
+          });
         return response;
       });
 

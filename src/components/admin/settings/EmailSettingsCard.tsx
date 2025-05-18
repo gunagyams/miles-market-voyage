@@ -7,15 +7,15 @@ import { Save, BellRing, Plus, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 interface EmailSettings {
-  notifications_enabled: boolean;
-  admin_emails: string[];
+  sendNotificationsToAdmin: boolean;
+  adminEmails: string[];
 }
 
 interface EmailSettingsCardProps {
   emailSettings: EmailSettings;
   isLoading: boolean;
   isSaving: boolean;
-  onToggleNotifications: (checked: boolean) => void;
+  onToggleNotifications: () => void;
   onSaveEmailSettings: () => Promise<void>;
   onAddEmail: (email: string) => void;
   onRemoveEmail: (email: string) => void;
@@ -63,7 +63,7 @@ const EmailSettingsCard = ({
                 </p>
               </div>
               <Switch
-                checked={emailSettings.notifications_enabled}
+                checked={emailSettings.sendNotificationsToAdmin}
                 onCheckedChange={onToggleNotifications}
               />
             </div>
@@ -94,10 +94,10 @@ const EmailSettingsCard = ({
               
               {/* Email List */}
               <div className="space-y-2 mt-4">
-                {emailSettings.admin_emails.length === 0 ? (
+                {emailSettings.adminEmails.length === 0 ? (
                   <p className="text-sm text-gray-500 italic">No email recipients added yet</p>
                 ) : (
-                  emailSettings.admin_emails.map((email, index) => (
+                  emailSettings.adminEmails.map((email, index) => (
                     <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                       <span className="text-sm">{email}</span>
                       <Button 
