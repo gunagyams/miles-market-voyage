@@ -1,187 +1,236 @@
+
 import { useState, useEffect } from "react";
 import { supabase, safeSupabaseOperation } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Json } from "@/integrations/supabase/types";
 
 interface ContactDetails {
-  email: string;
-  phone: string;
   address: string;
-  whatsapp: string;
+  phone: string;
+  email: string;
 }
 
 interface EmailSettings {
-  sendNotificationsToAdmin: boolean;
-  adminEmails: string[];
+  notifications_enabled: boolean;
+  admin_emails: string[];
 }
 
-interface AirlineSettings {
-  isAvailable: boolean;
-}
-
-const useSettingsData = () => {
+export function useSettingsData() {
   const [contactDetails, setContactDetails] = useState<ContactDetails>({
-    email: "",
-    phone: "",
     address: "",
-    whatsapp: "",
+    phone: "",
+    email: "",
   });
   const [emailSettings, setEmailSettings] = useState<EmailSettings>({
-    sendNotificationsToAdmin: true,
-    adminEmails: [],
-  });
-  const [airlineSettings, setAirlineSettings] = useState<AirlineSettings>({
-    isAvailable: true,
+    notifications_enabled: true,
+    admin_emails: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch contact details
-        const contactData = await safeSupabaseOperation(async () => {
-          const response = await supabase
-            .from("site_settings")
-            .select("value")
-            .eq("id", "contact")
-            .single();
-          return response;
-        });
-
-        if (contactData?.value) {
-          // Use proper type assertion with unknown intermediary
-          const contactValue = contactData.value as Record<string, any>;
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch contact details
+      const contactData = await safeSupabaseOperation(async () => {
+        const response = await supabase
+          .from("site_settings")
+          .select("*")
+          .eq("id", "contact_details")
+          .maybeSingle();
+        return response;
+      });
+      
+      console.log("Fetched contact details:", contactData);
+      
+      if (contactData) {
+        // Type assertion with safety check
+        const dataValue = contactData.value;
+        if (dataValue && typeof dataValue === 'object') {
+          const contactValue = dataValue as Record<string, string>;
           setContactDetails({
-            email: contactValue.email || "",
-            phone: contactValue.phone || "",
             address: contactValue.address || "",
-            whatsapp: contactValue.whatsapp || "",
+            phone: contactValue.phone || "",
+            email: contactValue.email || ""
           });
         }
-
-        // Fetch email settings
-        const emailData = await safeSupabaseOperation(async () => {
-          const response = await supabase
-            .from("site_settings")
-            .select("value")
-            .eq("id", "email")
-            .single();
-          return response;
-        });
-
-        if (emailData?.value) {
-          // Use proper type assertion with unknown intermediary
-          const emailValue = emailData.value as Record<string, any>;
-          setEmailSettings({
-            sendNotificationsToAdmin: emailValue.sendNotificationsToAdmin || false,
-            adminEmails: Array.isArray(emailValue.adminEmails) ? emailValue.adminEmails : [],
-          });
-        }
-
-        // Fetch airline settings
-        const airlineData = await safeSupabaseOperation(async () => {
-          const response = await supabase
-            .from("site_settings")
-            .select("value")
-            .eq("id", "airline")
-            .single();
-          return response;
-        });
-
-        if (airlineData?.value) {
-          // Use proper type assertion with unknown intermediary
-          const airlineValue = airlineData.value as Record<string, any>;
-          setAirlineSettings({
-            isAvailable: Boolean(airlineValue.isAvailable),
-          });
-        } else {
-          // If no airline settings exist, create default one
-          await safeSupabaseOperation(async () => {
-            return supabase
-              .from("site_settings")
-              .insert({ id: "airline", value: { isAvailable: true } as Json });
-          });
-        }
-
-      } catch (error: any) {
-        console.error("Error fetching settings:", error);
-        toast({
-          title: "Error loading settings",
-          description: error.message || "Failed to load settings",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
+      } else {
+        // Settings not found, initialize them
+        await initializeContactSettings();
       }
-    };
 
-    fetchSettings();
-  }, [toast]);
+      // Fetch email settings
+      const emailData = await safeSupabaseOperation(async () => {
+        const response = await supabase
+          .from("site_settings")
+          .select("*")
+          .eq("id", "email_settings")
+          .maybeSingle();
+        return response;
+      });
+      
+      console.log("Fetched email settings:", emailData);
+      
+      if (emailData) {
+        // Type assertion with safety check
+        const dataValue = emailData.value;
+        if (dataValue && typeof dataValue === 'object') {
+          // Safely convert JSON data to EmailSettings interface
+          const emailValue = dataValue as Record<string, any>;
+          setEmailSettings({
+            notifications_enabled: emailValue.notifications_enabled ?? true,
+            admin_emails: Array.isArray(emailValue.admin_emails) ? emailValue.admin_emails : []
+          });
+        }
+      } else {
+        // Settings not found, initialize them
+        await initializeEmailSettings();
+      }
+    } catch (error: any) {
+      console.error("Error fetching settings:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to load settings.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const handleContactInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const initializeContactSettings = async () => {
+    try {
+      const initialData = {
+        address: "",
+        phone: "",
+        email: ""
+      };
+
+      console.log("Initializing contact settings with:", initialData);
+
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
+          .from("site_settings")
+          .insert({ 
+            id: "contact_details", 
+            value: initialData as unknown as Json,
+            updated_at: new Date().toISOString()
+          });
+        return response;
+      });
+
+      setContactDetails(initialData);
+    } catch (error: any) {
+      console.error("Error initializing contact settings:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to initialize contact details.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const initializeEmailSettings = async () => {
+    try {
+      const initialData = {
+        notifications_enabled: true,
+        admin_emails: []
+      };
+
+      console.log("Initializing email settings with:", initialData);
+
+      await safeSupabaseOperation(async () => {
+        const response = await supabase
+          .from("site_settings")
+          .insert({ 
+            id: "email_settings", 
+            value: initialData as unknown as Json,
+            updated_at: new Date().toISOString()
+          });
+        return response;
+      });
+
+      setEmailSettings(initialData);
+    } catch (error: any) {
+      console.error("Error initializing email settings:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to initialize email settings.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleContactInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setContactDetails((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setContactDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleToggleNotifications = () => {
-    setEmailSettings((prev) => ({
+  const handleToggleNotifications = (checked: boolean) => {
+    setEmailSettings(prev => ({
       ...prev,
-      sendNotificationsToAdmin: !prev.sendNotificationsToAdmin,
-    }));
-  };
-
-  const handleToggleAirlineAvailability = () => {
-    setAirlineSettings((prev) => ({
-      ...prev,
-      isAvailable: !prev.isAvailable,
+      notifications_enabled: checked
     }));
   };
 
   const addAdminEmail = (email: string) => {
-    if (!email || emailSettings.adminEmails.includes(email)) return;
-    setEmailSettings((prev) => ({
+    if (!email || !email.includes('@')) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (emailSettings.admin_emails.includes(email)) {
+      toast({
+        title: "Email Already Added",
+        description: "This email is already in the list.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setEmailSettings(prev => ({
       ...prev,
-      adminEmails: [...prev.adminEmails, email],
+      admin_emails: [...prev.admin_emails, email]
     }));
   };
 
   const removeAdminEmail = (email: string) => {
-    setEmailSettings((prev) => ({
+    setEmailSettings(prev => ({
       ...prev,
-      adminEmails: prev.adminEmails.filter((e) => e !== email),
+      admin_emails: prev.admin_emails.filter(e => e !== email)
     }));
   };
 
   const handleSaveContactDetails = async () => {
     setIsSaving(true);
     try {
+      console.log("Saving contact details:", contactDetails);
+      
       await safeSupabaseOperation(async () => {
         const response = await supabase
           .from("site_settings")
-          .upsert({ 
-            id: "contact", 
-            value: contactDetails as unknown as Json 
-          });
+          .update({ 
+            value: contactDetails as unknown as Json, 
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", "contact_details");
         return response;
       });
-
+      
       toast({
         title: "Success",
-        description: "Contact details saved successfully",
+        description: "Contact details updated successfully.",
       });
     } catch (error: any) {
-      console.error("Error saving contact details:", error);
+      console.error("Error updating contact settings:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to save contact details",
+        description: error.message || "Failed to update contact details.",
         variant: "destructive",
       });
     } finally {
@@ -192,25 +241,28 @@ const useSettingsData = () => {
   const handleSaveEmailSettings = async () => {
     setIsSaving(true);
     try {
+      console.log("Saving email settings:", emailSettings);
+      
       await safeSupabaseOperation(async () => {
         const response = await supabase
           .from("site_settings")
-          .upsert({ 
-            id: "email", 
-            value: emailSettings as unknown as Json 
-          });
+          .update({ 
+            value: emailSettings as unknown as Json, 
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", "email_settings");
         return response;
       });
-
+      
       toast({
         title: "Success",
-        description: "Email settings saved successfully",
+        description: "Email notification settings updated successfully.",
       });
     } catch (error: any) {
-      console.error("Error saving email settings:", error);
+      console.error("Error updating email settings:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to save email settings",
+        description: error.message || "Failed to update email settings.",
         variant: "destructive",
       });
     } finally {
@@ -218,50 +270,22 @@ const useSettingsData = () => {
     }
   };
 
-  const handleSaveAirlineSettings = async () => {
-    setIsSaving(true);
-    try {
-      await safeSupabaseOperation(async () => {
-        const response = await supabase
-          .from("site_settings")
-          .upsert({ 
-            id: "airline", 
-            value: airlineSettings as unknown as Json 
-          });
-        return response;
-      });
-
-      toast({
-        title: "Success",
-        description: "Airline settings saved successfully",
-      });
-    } catch (error: any) {
-      console.error("Error saving airline settings:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save airline settings",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  useEffect(() => {
+    fetchSettings();
+  }, []);
 
   return {
     contactDetails,
     emailSettings,
-    airlineSettings,
     isLoading,
     isSaving,
     handleContactInputChange,
     handleToggleNotifications,
-    handleToggleAirlineAvailability,
     addAdminEmail,
     removeAdminEmail,
     handleSaveContactDetails,
     handleSaveEmailSettings,
-    handleSaveAirlineSettings,
   };
-};
+}
 
 export default useSettingsData;
