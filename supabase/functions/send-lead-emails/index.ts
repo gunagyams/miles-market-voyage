@@ -81,7 +81,7 @@ const handler = async (req: Request): Promise<Response> => {
         to: [email],
         subject: "Your Miles Purchase Request - Cash My Points",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
             <div style="text-align: center; margin-bottom: 20px;">
               <h1 style="color: #0f172a;">Cash My Points</h1>
             </div>
@@ -96,6 +96,13 @@ const handler = async (req: Request): Promise<Response> => {
             <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
               <p>We appreciate your business and look forward to helping you with your miles purchase!</p>
               <p>Best regards,<br>The Cash My Points Team</p>
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; text-align: center; background-color: #ffffff; margin-top: 30px;">
+              <p style="font-weight: 500; color: #0f172a; margin-bottom: 5px;">Tanya M. | Sr. Accounts Executive</p>
+              <p style="color: #6b7280; font-size: 12px; margin-bottom: 5px;">Office Address: Citadel Tower, Business Bay, Floor 25th Office No 2507 96, Dubai, UAE</p>
+              <p style="color: #6b7280; font-size: 12px; margin-bottom: 15px;">Phone Number: +971 529581786</p>
+              <p style="color: #6b7280; font-size: 13px; font-style: italic; margin-bottom: 15px;">Trusted by 5000+ travelers</p>
+              <a href="https://www.trustpilot.com/review/cashmypoint.com" style="color: #1d4ed8; text-decoration: underline; font-size: 13px;">See our reviews on Trustpilot</a>
             </div>
           </div>
         `,
@@ -124,7 +131,7 @@ const handler = async (req: Request): Promise<Response> => {
           to: adminEmails,
           subject: "New Lead Notification - Cash My Points",
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e4ab2c; border-radius: 5px;">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
               <div style="text-align: center; margin-bottom: 20px;">
                 <h1 style="color: #0f172a;">New Lead Notification</h1>
               </div>
@@ -132,7 +139,8 @@ const handler = async (req: Request): Promise<Response> => {
                 <h2 style="color: #0f172a;">New Miles Purchase Request</h2>
                 <p><strong>Customer Details:</strong></p>
                 <ul style="list-style-type: none; padding-left: 0;">
-                  <li><strong>Name:</strong> ${firstName} ${lastName}</li>
+                  <li><strong>First Name:</strong> ${firstName}</li>
+                  <li><strong>Last Name:</strong> ${lastName}</li>
                   <li><strong>Email:</strong> ${email}</li>
                   <li><strong>Phone:</strong> ${phone}</li>
                 </ul>

@@ -117,8 +117,19 @@ const QuoteForm = () => {
       // Save lead to Supabase
       const leadData = await saveLead(formData);
       
-      // Send email notifications
-      const emailResult = await sendEmailNotifications(leadData, estimatedTotal, emailSettings);
+      // Send email notifications with firstName and lastName separately
+      const emailResult = await sendEmailNotifications(
+        {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.whatsapp,
+          airline: formData.airline,
+          miles_amount: formData.miles
+        }, 
+        estimatedTotal, 
+        emailSettings
+      );
       
       if (!emailResult.success) {
         toast({

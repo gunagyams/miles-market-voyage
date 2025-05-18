@@ -106,9 +106,9 @@ const FormFields: React.FC<FormFieldsProps> = ({
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:outline-none"
             placeholder="Your frequent flyer number"
           />
-          <div className="mt-2 p-2 bg-amber-50 border border-amber-100 rounded-md flex items-start space-x-2 text-xs">
-            <Info className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-            <span className="text-amber-700">
+          <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded-md flex items-start space-x-2 text-xs">
+            <Info className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
+            <span className="text-gray-600">
               Please ensure your frequent flyer number matches the name in your airline account records.
             </span>
           </div>
