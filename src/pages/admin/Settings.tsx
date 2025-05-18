@@ -2,20 +2,24 @@
 import React from "react";
 import ContactSettingsCard from "@/components/admin/settings/ContactSettingsCard";
 import EmailSettingsCard from "@/components/admin/settings/EmailSettingsCard";
+import AirlineSettingsCard from "@/components/admin/settings/AirlineSettingsCard";
 import useSettingsData from "@/hooks/useSettingsData";
 
 const Settings = () => {
   const {
     contactDetails,
     emailSettings,
+    airlineSettings,
     isLoading,
     isSaving,
     handleContactInputChange,
     handleToggleNotifications,
+    handleToggleAirlineAvailability,
     addAdminEmail,
     removeAdminEmail,
     handleSaveContactDetails,
     handleSaveEmailSettings,
+    handleSaveAirlineSettings,
   } = useSettingsData();
 
   return (
@@ -43,6 +47,15 @@ const Settings = () => {
         onSaveEmailSettings={handleSaveEmailSettings}
         onAddEmail={addAdminEmail}
         onRemoveEmail={removeAdminEmail}
+      />
+
+      {/* Airline Availability Card */}
+      <AirlineSettingsCard
+        airlineSettings={airlineSettings}
+        isLoading={isLoading}
+        isSaving={isSaving}
+        onToggleAirlineAvailability={handleToggleAirlineAvailability}
+        onSaveAirlineSettings={handleSaveAirlineSettings}
       />
     </div>
   );
