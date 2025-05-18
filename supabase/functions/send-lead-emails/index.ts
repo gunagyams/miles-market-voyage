@@ -63,8 +63,8 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // We'll use Resend's default sender email for testing since domain verification is causing issues
-    const fromEmail = "onboarding@resend.dev";
+    // Use your verified domain (from cashmypoints.com)
+    const fromEmail = "hi@cashmypoints.com";
     const fromName = "Cash My Points";
 
     // Send confirmation email to customer
@@ -110,9 +110,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
-      try {
-        // Send to all admin emails
-        for (const adminEmail of adminEmails) {
+      // Send each admin email individually to avoid exposing other admin emails
+      for (const adminEmail of adminEmails) {
+        try {
           console.log(`Attempting to send admin email to: ${adminEmail}`);
           const adminEmailResult = await resend.emails.send({
             from: `${fromName} <${fromEmail}>`,
@@ -153,10 +153,10 @@ const handler = async (req: Request): Promise<Response> => {
             console.log("Admin email sent successfully to:", adminEmail);
             successCount++;
           }
+        } catch (error) {
+          console.error(`Error sending admin email to ${adminEmail}:`, error);
+          errors.push({ type: "admin", error: error.message });
         }
-      } catch (error) {
-        console.error("Error sending admin email:", error);
-        errors.push({ type: "admin", error: error.message });
       }
     } else {
       console.log("No admin emails configured, skipping admin notification");
@@ -174,7 +174,7 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in send-lead-emails function:", error);
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
