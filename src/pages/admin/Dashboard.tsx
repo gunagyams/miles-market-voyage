@@ -1,14 +1,19 @@
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Users, Calendar, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BarChart, Users, Calendar, Info, Ticket, ArrowRight } from "lucide-react";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalAirlines: 0,
     totalLeads: 0,
+    totalBookTicketLeads: 0,
     newLeadsToday: 0,
+    newBookTicketLeadsToday: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,6 +31,11 @@ const Dashboard = () => {
           .from("leads")
           .select("*", { count: "exact", head: true });
 
+        // Get total book ticket leads
+        const { count: bookTicketLeadsCount } = await supabase
+          .from("flight_bookings")
+          .select("*", { count: "exact", head: true });
+
         // Get today's leads
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -35,10 +45,18 @@ const Dashboard = () => {
           .select("*", { count: "exact", head: true })
           .gte("created_at", today.toISOString());
 
+        // Get today's book ticket leads
+        const { count: todayBookTicketLeadsCount } = await supabase
+          .from("flight_bookings")
+          .select("*", { count: "exact", head: true })
+          .gte("created_at", today.toISOString());
+
         setStats({
           totalAirlines: airlineCount || 0,
           totalLeads: leadsCount || 0,
+          totalBookTicketLeads: bookTicketLeadsCount || 0,
           newLeadsToday: todayLeadsCount || 0,
+          newBookTicketLeadsToday: todayBookTicketLeadsCount || 0,
         });
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
@@ -58,8 +76,8 @@ const Dashboard = () => {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-5 bg-gray-200 rounded w-1/2"></div>
@@ -71,7 +89,7 @@ const Dashboard = () => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Airlines</CardTitle>
@@ -79,24 +97,56 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalAirlines}</div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2 p-0 h-auto text-blue-600 hover:text-blue-800"
+                onClick={() => navigate("/admin/airlines")}
+              >
+                Manage Airlines <ArrowRight className="h-3 w-3 ml-1" />
+              </Button>
             </CardContent>
           </Card>
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
+              <CardTitle className="text-sm font-medium">Miles Purchase Leads</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalLeads}</div>
+              <div className="text-xs text-muted-foreground">
+                {stats.newLeadsToday} new today
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2 p-0 h-auto text-blue-600 hover:text-blue-800"
+                onClick={() => navigate("/admin/leads")}
+              >
+                View Leads <ArrowRight className="h-3 w-3 ml-1" />
+              </Button>
             </CardContent>
           </Card>
+          
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Leads Today</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Book Ticket Leads</CardTitle>
+              <Ticket className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.newLeadsToday}</div>
+              <div className="text-2xl font-bold">{stats.totalBookTicketLeads}</div>
+              <div className="text-xs text-muted-foreground">
+                {stats.newBookTicketLeadsToday} new today
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2 p-0 h-auto text-blue-600 hover:text-blue-800"
+                onClick={() => navigate("/admin/book-ticket-leads")}
+              >
+                View Leads <ArrowRight className="h-3 w-3 ml-1" />
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -117,9 +167,15 @@ const Dashboard = () => {
             </p>
           </div>
           <div>
-            <h3 className="font-medium">Leads Management</h3>
+            <h3 className="font-medium">Miles Purchase Leads</h3>
             <p className="text-sm text-gray-500">
-              View and manage customer inquiries and follow-ups in the Leads section.
+              View and manage customer inquiries for miles purchases in the Leads section.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-medium">Book Ticket Leads</h3>
+            <p className="text-sm text-gray-500">
+              View and manage customer inquiries for flight bookings in the Book Ticket Leads section.
             </p>
           </div>
           <div>
