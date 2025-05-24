@@ -4,12 +4,13 @@ import { Resend } from "npm:resend@2.0.0";
 
 // Initialize Resend with the API key from environment variables
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
-if (!resendApiKey) {
-  console.error("RESEND_API_KEY is not set. Emails will not be sent.");
-}
-const resend = new Resend(resendApiKey);
+console.log("Environment check - RESEND_API_KEY present:", !!resendApiKey);
 
-console.log("Resend initialized with API key:", resendApiKey ? "API key is set" : "API key is missing");
+if (!resendApiKey) {
+  console.error("CRITICAL: RESEND_API_KEY is not set in environment variables");
+}
+
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,23 +30,28 @@ interface BookingEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log("=== BOOKING EMAIL FUNCTION STARTED ===");
+  console.log("Request method:", req.method);
+  console.log("RESEND_API_KEY configured:", !!resendApiKey);
+  
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
+    console.log("Handling OPTIONS request");
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const payload: BookingEmailRequest = await req.json();
+    console.log("Received payload:", JSON.stringify(payload, null, 2));
+    
     const { firstName, lastName, email, phone, airline, points, flightDetails, adminEmails, notificationsEnabled } = payload;
     
-    console.log("Received booking email request with data:", payload);
-    console.log("Resend API key configured:", resendApiKey ? "Yes" : "No");
-    
     if (!resendApiKey) {
+      console.error("RESEND_API_KEY not found in environment");
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: "RESEND_API_KEY is not configured",
+          error: "Email service not configured - RESEND_API_KEY missing",
           apiKeyPresent: false
         }),
         {
@@ -56,7 +62,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
     
     if (!notificationsEnabled) {
-      console.log("Email notifications are disabled in settings, skipping email sending");
+      console.log("Email notifications disabled in settings");
       return new Response(
         JSON.stringify({ success: true, message: "Notifications disabled" }),
         {
@@ -69,13 +75,15 @@ const handler = async (req: Request): Promise<Response> => {
     let successCount = 0;
     let errors = [];
     
-    // Use your verified domain email which is set in the environment variable
+    // Use verified domain email
     const verifiedEmail = Deno.env.get("VERIFIED_DOMAIN_EMAIL") || "hi@cashmypoints.com";
     const fromName = "Cash My Points";
+    
+    console.log("Using sender email:", verifiedEmail);
 
     // Send confirmation email to customer
     try {
-      console.log(`Attempting to send customer email to: ${email} from: ${verifiedEmail}`);
+      console.log(`Sending customer email to: ${email}`);
       const customerEmailResult = await resend.emails.send({
         from: `${fromName} <${verifiedEmail}>`,
         to: [email],
@@ -117,24 +125,23 @@ const handler = async (req: Request): Promise<Response> => {
         `,
       });
       
-      console.log("Customer email result:", customerEmailResult);
+      console.log("Customer email result:", JSON.stringify(customerEmailResult, null, 2));
       
       if (customerEmailResult.error) {
-        throw new Error(`Customer email error: ${customerEmailResult.error.message}`);
+        throw new Error(`Customer email failed: ${customerEmailResult.error.message}`);
       } else {
-        console.log("Customer email sent successfully to:", email);
+        console.log("✅ Customer email sent successfully");
         successCount++;
       }
     } catch (error) {
-      console.error(`Error sending customer email to ${email}:`, error);
+      console.error(`❌ Customer email error:`, error);
       errors.push({ type: "customer", error: error.message });
     }
 
     // Send notification emails to admins
     if (adminEmails && adminEmails.length > 0) {
       try {
-        // Send to all admin emails at once to simplify the process
-        console.log(`Attempting to send admin emails to: ${adminEmails.join(", ")} from: ${verifiedEmail}`);
+        console.log(`Sending admin emails to: ${adminEmails.join(", ")}`);
         const adminEmailResult = await resend.emails.send({
           from: `${fromName} <${verifiedEmail}>`,
           to: adminEmails,
@@ -170,37 +177,42 @@ const handler = async (req: Request): Promise<Response> => {
           `,
         });
         
-        console.log("Admin emails result:", adminEmailResult);
+        console.log("Admin emails result:", JSON.stringify(adminEmailResult, null, 2));
         
         if (adminEmailResult.error) {
-          throw new Error(`Admin email error: ${adminEmailResult.error.message}`);
+          throw new Error(`Admin emails failed: ${adminEmailResult.error.message}`);
         } else {
-          console.log("Admin emails sent successfully to:", adminEmails.join(", "));
+          console.log("✅ Admin emails sent successfully");
           successCount++;
         }
       } catch (error) {
-        console.error(`Error sending admin emails to ${adminEmails.join(", ")}:`, error);
+        console.error(`❌ Admin emails error:`, error);
         errors.push({ type: "admin", error: error.message });
       }
     } else {
-      console.log("No admin emails configured, skipping admin notification");
+      console.log("⚠️ No admin emails configured");
     }
 
+    const result = {
+      success: successCount > 0,
+      sent: successCount,
+      errors: errors.length > 0 ? errors : undefined,
+      testMode: false,
+      apiKeyUsed: resendApiKey ? resendApiKey.substring(0, 5) + "..." : "none",
+      totalExpected: 1 + (adminEmails?.length || 0)
+    };
+    
+    console.log("=== FINAL RESULT ===", JSON.stringify(result, null, 2));
+
     return new Response(
-      JSON.stringify({
-        success: successCount > 0,
-        sent: successCount,
-        errors: errors.length > 0 ? errors : undefined,
-        testMode: false,
-        apiKeyUsed: resendApiKey ? resendApiKey.substring(0, 5) + "..." : "none"
-      }),
+      JSON.stringify(result),
       {
         status: successCount > 0 ? 200 : 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
   } catch (error: any) {
-    console.error("Error in send-booking-emails function:", error);
+    console.error("=== FUNCTION ERROR ===", error);
     return new Response(
       JSON.stringify({ 
         success: false, 

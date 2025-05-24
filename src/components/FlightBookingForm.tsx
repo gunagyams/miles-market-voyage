@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,29 +63,26 @@ const FlightBookingForm = ({ onSuccess }: FlightBookingFormProps) => {
         return;
       }
 
+      console.log("Starting flight booking submission with data:", formData);
+
       // Save the flight booking to database
-      const bookingData = await saveFlightBooking({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        airline: formData.airline,
-        points: parseInt(formData.points),
-        flightDetails: formData.flightDetails,
-      });
+      const bookingData = await saveFlightBooking(formData);
+      console.log("Booking saved to database:", bookingData);
 
       // Fetch email settings
       const emailSettings = await fetchEmailSettings();
+      console.log("Email settings fetched:", emailSettings);
 
       // Send email notifications
       const emailResult = await sendBookingEmailNotifications(bookingData, emailSettings);
+      console.log("Email notification result:", emailResult);
 
-      if (!emailResult.success && !emailResult.testMode) {
+      if (!emailResult.success) {
         console.warn('Email sending failed:', emailResult.error);
         // Still show success to user since the booking was saved
         toast({
           title: "Booking Request Submitted",
-          description: "Your flight booking request has been saved. We'll contact you within 2 hours.",
+          description: "Your flight booking request has been saved. We'll contact you within 2 hours. Note: Email notifications may be delayed.",
           className: "bg-white border-gold",
         });
       } else {
