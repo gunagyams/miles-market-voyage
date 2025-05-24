@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -12,9 +12,14 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -48,6 +53,12 @@ const Header = () => {
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
               Reviews
+            </Link>
+            <Link
+              to="/book-tickets"
+              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
+            >
+              Book
             </Link>
           </nav>
 
@@ -122,35 +133,42 @@ const Header = () => {
               <Link
                 to="/#airlines"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
+                onClick={closeMenu}
               >
                 Airlines
               </Link>
               <Link
                 to="/#calculator"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
+                onClick={closeMenu}
               >
                 Calculator
               </Link>
               <Link
                 to="/reviews"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
+                onClick={closeMenu}
               >
                 Reviews
               </Link>
               <Link
+                to="/book-tickets"
+                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
+                onClick={closeMenu}
+              >
+                Book
+              </Link>
+              <Link
                 to="/#about"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
+                onClick={closeMenu}
               >
                 About Us
               </Link>
               <Link
                 to="/#quote"
                 className="w-full flex justify-center items-center bg-gold hover:bg-gold-dark text-white py-2 px-6 rounded-md transition-colors duration-200 mt-4 font-jakarta text-sm uppercase tracking-wide"
-                onClick={toggleMenu}
+                onClick={closeMenu}
               >
                 Get a Quote
               </Link>

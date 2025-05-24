@@ -34,13 +34,13 @@ const BookingGallery = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
-      <div className="container-custom px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-navy mb-6 font-gilda">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-gray-50 to-white">
+      <div className="container-custom px-4 md:px-6">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-navy mb-4 md:mb-6 font-gilda">
             Experience Luxury Travel
           </h2>
-          <p className="text-xl text-gray-600 font-jakarta max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 font-jakarta max-w-3xl mx-auto">
             See what awaits you in business and first class cabins around the world
           </p>
         </div>
@@ -49,16 +49,16 @@ const BookingGallery = () => {
           <Carousel className="w-full">
             <CarouselContent>
               {luxuryImages.map((image, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3 pl-4 md:pl-6">
                   <div className="p-1">
                     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       <CardContent className="p-0">
                         <img
                           src={image.src}
                           alt={image.alt}
-                          className="w-full h-64 object-cover"
+                          className="w-full h-48 md:h-64 object-cover"
                         />
-                        <div className="p-4">
+                        <div className="p-3 md:p-4">
                           <p className="text-center font-semibold text-navy font-gilda">
                             {image.caption}
                           </p>
@@ -69,8 +69,10 @@ const BookingGallery = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <div className="hidden sm:block">
+              <CarouselPrevious className="left-1" />
+              <CarouselNext className="right-1" />
+            </div>
           </Carousel>
         </div>
       </div>

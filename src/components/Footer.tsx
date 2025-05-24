@@ -124,7 +124,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="#airlines"
+                  href="/#airlines"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
                   Airlines
@@ -132,7 +132,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#calculator"
+                  href="/#calculator"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
                   Calculator
@@ -140,7 +140,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#testimonials"
+                  href="/#testimonials"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
                   Testimonials
@@ -155,8 +155,16 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link
+                  to="/book-tickets"
+                  className="text-gray-300 hover:text-gold transition-colors duration-200"
+                >
+                  Book
+                </Link>
+              </li>
+              <li>
                 <a
-                  href="#about"
+                  href="/#about"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
                   About Us
@@ -164,7 +172,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#quote"
+                  href="/#quote"
                   className="text-gray-300 hover:text-gold transition-colors duration-200"
                 >
                   Get a Quote
