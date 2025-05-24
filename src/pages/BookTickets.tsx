@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,9 +7,25 @@ import BookingGallery from "@/components/BookingGallery";
 import SuccessStories from "@/components/SuccessStories";
 import FlightBookingModal from "@/components/FlightBookingModal";
 import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones, Search, MessageSquare, CreditCard, MapPin } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const BookTickets = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSpeakToExpert = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const phoneNumber = "971529581786";
+    const message = encodeURIComponent(
+      "Hello, I'd like to speak to an expert about booking flights with points. Can you assist me?"
+    );
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+
+    toast({
+      title: "WhatsApp Support",
+      description: "Opening WhatsApp to connect you with our flight booking expert.",
+      className: "bg-white border-green-400",
+    });
+  };
 
   return (
     <div className="min-h-screen">
@@ -114,7 +131,7 @@ const BookTickets = () => {
               onClick={() => setIsModalOpen(true)}
               className="bg-gold hover:bg-gold-dark text-white font-medium py-4 px-8 rounded-lg transition-colors duration-200 font-jakarta text-lg"
             >
-              Get Flight Quote
+              Book Your Flight
             </button>
           </div>
         </div>
@@ -196,9 +213,12 @@ const BookTickets = () => {
                   onClick={() => setIsModalOpen(true)}
                   className="w-full bg-gold hover:bg-gold-dark text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta"
                 >
-                  Get Flight Quote
+                  Book Your Flight
                 </button>
-                <button className="w-full bg-transparent hover:bg-white/10 border border-white text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta">
+                <button 
+                  onClick={handleSpeakToExpert}
+                  className="w-full bg-transparent hover:bg-white/10 border border-white text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta"
+                >
                   Speak to Expert
                 </button>
               </div>

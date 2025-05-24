@@ -8,8 +8,8 @@ const SuccessStories = () => {
       route: "Dubai → Los Angeles",
       airline: "Emirates First Class",
       traditionalPrice: "$12,500",
-      ourPrice: "$3,200",
-      savings: "74%",
+      ourPrice: "$1,800",
+      savings: "86%",
       points: "170,000 Emirates Skywards",
       image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&auto=format&fit=crop&q=60"
     },
@@ -17,8 +17,8 @@ const SuccessStories = () => {
       route: "London → New York",
       airline: "British Airways Club World",
       traditionalPrice: "$8,900",
-      ourPrice: "$2,100",
-      savings: "76%",
+      ourPrice: "$1,500",
+      savings: "83%",
       points: "85,000 Avios",
       image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=60"
     }
@@ -99,7 +99,7 @@ const SuccessStories = () => {
               Found a reward flight you want? Share the details with us and we'll give you an instant quote
             </p>
             <button className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 font-jakarta">
-              Get Your Quote Now
+              Book Your Flight
             </button>
           </div>
         </div>
