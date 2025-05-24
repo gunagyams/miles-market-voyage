@@ -29,53 +29,37 @@ const Hero = () => {
           {/* Two Main Options */}
           <div className="grid md:grid-cols-2 gap-6 mb-10">
             {/* Buy Miles Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="bg-gold/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <CreditCard className="w-8 h-8 text-gold" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
+              <div className="bg-gold/20 p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+                <CreditCard className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 font-gilda">Buy Miles</h3>
-              <p className="text-gray-200 mb-6">
+              <h3 className="text-xl font-bold mb-3 font-gilda">Buy Miles</h3>
+              <p className="text-gray-200 mb-4 text-sm">
                 Purchase airline miles directly at unbeatable rates from top airlines worldwide.
               </p>
-              <div className="flex flex-col gap-3">
-                <a
-                  href="#airlines"
-                  className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
-                >
-                  Browse Miles Deals
-                </a>
-                <a
-                  href="#quote"
-                  className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
-                >
-                  Get Miles Quote
-                </a>
-              </div>
+              <a
+                href="#airlines"
+                className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm"
+              >
+                Browse Miles Deals
+              </a>
             </div>
 
             {/* Book Tickets Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="bg-gold/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Plane className="w-8 h-8 text-gold" />
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
+              <div className="bg-gold/20 p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+                <Plane className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 font-gilda">Book Tickets</h3>
-              <p className="text-gray-200 mb-6">
-                Choose your preferred flights and let us book them for you using points at incredible savings.
+              <h3 className="text-xl font-bold mb-3 font-gilda">Book Tickets</h3>
+              <p className="text-gray-200 mb-4 text-sm">
+                Found a reward flight? Share it with us and we'll book it for you using points at incredible savings.
               </p>
-              <div className="flex flex-col gap-3">
-                <Link
-                  to="/book-tickets"
-                  className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
-                >
-                  Book Flight Tickets
-                </Link>
-                <Link
-                  to="/book-tickets#quote"
-                  className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
-                >
-                  Get Booking Quote
-                </Link>
-              </div>
+              <Link
+                to="/book-tickets"
+                className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm"
+              >
+                Book Flight Tickets
+              </Link>
             </div>
           </div>
 

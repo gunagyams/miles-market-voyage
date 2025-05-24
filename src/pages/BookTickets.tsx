@@ -3,7 +3,9 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones } from "lucide-react";
+import BookingGallery from "@/components/BookingGallery";
+import SuccessStories from "@/components/SuccessStories";
+import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones, Search, MessageSquare, CreditCard, MapPin } from "lucide-react";
 
 const BookTickets = () => {
   return (
@@ -21,17 +23,17 @@ const BookTickets = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight font-gilda">
-              <span className="block">Book Premium Flights</span>
-              <span className="block text-gold">With Points</span>
+              <span className="block">Found Your Dream Flight?</span>
+              <span className="block text-gold">We'll Book It For You</span>
             </h1>
             
             <p className="text-xl md:text-2xl mb-8 text-gray-100 font-jakarta">
-              Choose your dream destination, we'll book it for you using points at unbeatable prices
+              Share your reward flight details with us and we'll book it using points at unbeatable prices
             </p>
             
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg">
               <p className="text-lg font-jakarta text-gold font-semibold">
-                Save up to 90% on Business & First Class flights
+                No need to buy miles - we handle everything for you
               </p>
             </div>
           </div>
@@ -46,69 +48,61 @@ const BookTickets = () => {
               How It Works
             </h2>
             <p className="text-xl text-gray-600 font-jakarta max-w-3xl mx-auto">
-              Our simple 4-step process gets you flying in luxury for less
+              Simple 3-step process to get you flying in luxury for less
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Step 1 */}
             <div className="text-center group">
-              <div className="bg-gold/10 p-6 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
-                <Globe className="w-10 h-10 text-gold" />
+              <div className="bg-gold/10 p-8 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
+                <Search className="w-12 h-12 text-gold" />
               </div>
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 1
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Choose Your Flight</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Find Your Reward Flight</h3>
               <p className="text-gray-600 font-jakarta">
-                Browse and select your preferred flights from any airline, any destination, any class.
+                Search for award flights on any airline's website. Found something you like? Perfect!
               </p>
             </div>
 
             {/* Step 2 */}
             <div className="text-center group">
-              <div className="bg-gold/10 p-6 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
-                <Users className="w-10 h-10 text-gold" />
+              <div className="bg-gold/10 p-8 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
+                <MessageSquare className="w-12 h-12 text-gold" />
               </div>
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 2
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Submit Your Request</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Share Flight Details</h3>
               <p className="text-gray-600 font-jakarta">
-                Fill out our booking form with your flight details and travel preferences.
+                Send us the flight details, dates, and passenger information. We'll give you an instant quote.
               </p>
             </div>
 
             {/* Step 3 */}
             <div className="text-center group">
-              <div className="bg-gold/10 p-6 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
-                <Clock className="w-10 h-10 text-gold" />
+              <div className="bg-gold/10 p-8 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
+                <Plane className="w-12 h-12 text-gold" />
               </div>
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 3
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">We Find The Best Deal</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">We Book & You Fly</h3>
               <p className="text-gray-600 font-jakarta">
-                Our experts search for the best point redemption options across all airline programs.
-              </p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="text-center group">
-              <div className="bg-gold/10 p-6 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:bg-gold/20 transition-colors duration-300">
-                <Plane className="w-10 h-10 text-gold" />
-              </div>
-              <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
-                4
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Fly In Luxury</h3>
-              <p className="text-gray-600 font-jakarta">
-                Receive your tickets and enjoy your premium flight experience at a fraction of the cost.
+                Pay our discounted rate and we'll book your flight using points. Receive your tickets and fly in luxury!
               </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Luxury Gallery */}
+      <BookingGallery />
+
+      {/* Success Stories */}
+      <SuccessStories />
 
       {/* Benefits Section */}
       <section className="py-20 bg-white">
@@ -116,15 +110,15 @@ const BookTickets = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-4xl md:text-5xl font-bold text-navy mb-8 font-gilda">
-                Why Book With Us?
+                Why Choose Our Service?
               </h2>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Expert Point Optimization</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">No Miles Purchase Required</h3>
                     <p className="text-gray-600 font-jakarta">
-                      Our team knows every airline program inside out to get you the maximum value for your points.
+                      You don't need to buy miles yourself. We handle the entire booking process using our points inventory.
                     </p>
                   </div>
                 </div>
@@ -132,9 +126,9 @@ const BookTickets = () => {
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Access to Hidden Inventory</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Massive Savings</h3>
                     <p className="text-gray-600 font-jakarta">
-                      We can access award seats that aren't visible to the public through our airline partnerships.
+                      Save 60-80% compared to traditional booking sites by leveraging point redemptions.
                     </p>
                   </div>
                 </div>
@@ -142,9 +136,9 @@ const BookTickets = () => {
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Complete Service</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Expert Service</h3>
                     <p className="text-gray-600 font-jakarta">
-                      From booking to boarding, we handle everything so you can focus on enjoying your trip.
+                      Our team of airline experts ensures smooth booking and handles any changes or issues.
                     </p>
                   </div>
                 </div>
@@ -152,9 +146,9 @@ const BookTickets = () => {
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">24/7 Support</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Instant Quotes</h3>
                     <p className="text-gray-600 font-jakarta">
-                      Our dedicated team is available around the clock to assist with any changes or issues.
+                      Get pricing within minutes of sharing your flight details with our quick quote system.
                     </p>
                   </div>
                 </div>
@@ -165,7 +159,7 @@ const BookTickets = () => {
               <div className="text-center mb-8">
                 <h3 className="text-3xl font-bold mb-4 font-gilda">Ready to Book?</h3>
                 <p className="text-gray-200 font-jakarta">
-                  Get started with your luxury travel experience today
+                  Start your luxury travel experience today
                 </p>
               </div>
               
@@ -197,7 +191,7 @@ const BookTickets = () => {
             Start Your Journey Today
           </h2>
           <p className="text-xl mb-10 text-gray-200 font-jakarta max-w-3xl mx-auto">
-            Fill out our booking form and let our experts find you the perfect flight using points
+            Found your perfect reward flight? Share the details and get an instant quote
           </p>
           
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-2xl mx-auto">
