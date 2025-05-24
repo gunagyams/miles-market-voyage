@@ -1,14 +1,15 @@
-
-import React from "react";
+import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import BookingGallery from "@/components/BookingGallery";
 import SuccessStories from "@/components/SuccessStories";
-import FlightBookingForm from "@/components/FlightBookingForm";
+import FlightBookingModal from "@/components/FlightBookingModal";
 import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones, Search, MessageSquare, CreditCard, MapPin } from "lucide-react";
 
 const BookTickets = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -99,8 +100,31 @@ const BookTickets = () => {
         </div>
       </section>
 
+      {/* Call to Action Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container-custom px-6">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-navy mb-4 font-gilda">
+              Ready to Book Your Flight?
+            </h2>
+            <p className="text-lg text-gray-600 font-jakarta mb-8">
+              Found your perfect reward flight? Share the details and we'll book it using points at incredible savings.
+            </p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-gold hover:bg-gold-dark text-white font-medium py-4 px-8 rounded-lg transition-colors duration-200 font-jakarta text-lg"
+            >
+              Get Flight Quote
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Flight Booking Form */}
-      <FlightBookingForm />
+      <FlightBookingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
 
       {/* Luxury Gallery */}
       <BookingGallery />
@@ -168,7 +192,10 @@ const BookTickets = () => {
               </div>
               
               <div className="space-y-4">
-                <button className="w-full bg-gold hover:bg-gold-dark text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta">
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full bg-gold hover:bg-gold-dark text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta"
+                >
                   Get Flight Quote
                 </button>
                 <button className="w-full bg-transparent hover:bg-white/10 border border-white text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta">
@@ -190,6 +217,12 @@ const BookTickets = () => {
 
       <Footer />
       <FloatingWhatsApp />
+      
+      {/* Flight Booking Modal */}
+      <FlightBookingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };

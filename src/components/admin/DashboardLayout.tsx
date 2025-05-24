@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   X,
+  Ticket,
 } from "lucide-react";
 
 const DashboardLayout: React.FC = () => {
@@ -37,6 +38,11 @@ const DashboardLayout: React.FC = () => {
       icon: <Users className="h-5 w-5" />,
       label: "Leads",
       path: "/admin/leads",
+    },
+    {
+      icon: <Ticket className="h-5 w-5" />,
+      label: "Book Ticket Leads",
+      path: "/admin/book-ticket-leads",
     },
     {
       icon: <Settings className="h-5 w-5" />,
