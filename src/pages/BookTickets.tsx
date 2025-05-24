@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import BookingGallery from "@/components/BookingGallery";
 import SuccessStories from "@/components/SuccessStories";
+import FlightBookingForm from "@/components/FlightBookingForm";
 import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones, Search, MessageSquare, CreditCard, MapPin } from "lucide-react";
 
 const BookTickets = () => {
@@ -98,6 +99,9 @@ const BookTickets = () => {
         </div>
       </section>
 
+      {/* Flight Booking Form */}
+      <FlightBookingForm />
+
       {/* Luxury Gallery */}
       <BookingGallery />
 
@@ -179,34 +183,6 @@ const BookTickets = () => {
                 </div>
                 <p className="text-sm text-gray-300">Trusted by 10,000+ travelers</p>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="quote" className="py-20 bg-gradient-to-r from-navy to-navy-dark text-white">
-        <div className="container-custom px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 font-gilda">
-            Start Your Journey Today
-          </h2>
-          <p className="text-xl mb-10 text-gray-200 font-jakarta max-w-3xl mx-auto">
-            Found your perfect reward flight? Share the details and get an instant quote
-          </p>
-          
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold mb-6 font-gilda">Booking Form Coming Soon</h3>
-            <p className="text-gray-200 mb-8 font-jakarta">
-              Our comprehensive booking form will be available here to capture all your flight preferences and requirements.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 font-jakarta">
-                Contact Us Now
-              </button>
-              <button className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 font-jakarta">
-                Call: +1 (555) 123-4567
-              </button>
             </div>
           </div>
         </div>

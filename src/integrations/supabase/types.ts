@@ -60,6 +60,59 @@ export type Database = {
         }
         Relationships: []
       }
+      flight_bookings: {
+        Row: {
+          airline_name: string
+          created_at: string
+          email: string
+          first_name: string
+          flight_details: string
+          id: string
+          last_name: string
+          phone: string
+          points_required: number
+          screenshot_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          airline_name: string
+          created_at?: string
+          email: string
+          first_name: string
+          flight_details: string
+          id?: string
+          last_name: string
+          phone: string
+          points_required: number
+          screenshot_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          airline_name?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          flight_details?: string
+          id?: string
+          last_name?: string
+          phone?: string
+          points_required?: number
+          screenshot_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_airline_name"
+            columns: ["airline_name"]
+            isOneToOne: false
+            referencedRelation: "airlines"
+            referencedColumns: ["name"]
+          },
+        ]
+      }
       leads: {
         Row: {
           airline: string | null
