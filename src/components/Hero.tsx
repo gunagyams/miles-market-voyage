@@ -26,40 +26,48 @@ const Hero = () => {
             real airline miles.
           </p>
 
-          {/* Two Main Options - Slimmer Design */}
+          {/* Two Main Options - Compact Left-Aligned Design */}
           <div className="grid md:grid-cols-2 gap-4 mb-10 max-w-3xl mx-auto">
             {/* Buy Miles Section */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="flex items-center justify-center mb-2">
-                <CreditCard className="w-5 h-5 text-gold mr-2" />
-                <h3 className="text-lg font-bold font-gilda">Buy Miles</h3>
+              <div className="text-left">
+                <div className="flex items-center mb-2">
+                  <CreditCard className="w-5 h-5 text-gold mr-2" />
+                  <h3 className="text-lg font-bold font-gilda">Buy Miles</h3>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-200 text-sm flex-1 mr-4">
+                    Purchase airline miles at unbeatable rates from top airlines.
+                  </p>
+                  <a
+                    href="#airlines"
+                    className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm whitespace-nowrap"
+                  >
+                    Browse Miles
+                  </a>
+                </div>
               </div>
-              <p className="text-gray-200 mb-3 text-sm">
-                Purchase airline miles at unbeatable rates from top airlines.
-              </p>
-              <a
-                href="#airlines"
-                className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm inline-block"
-              >
-                Browse Miles
-              </a>
             </div>
 
             {/* Book Tickets Section */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
-              <div className="flex items-center justify-center mb-2">
-                <Plane className="w-5 h-5 text-gold mr-2" />
-                <h3 className="text-lg font-bold font-gilda">Book Tickets</h3>
+              <div className="text-left">
+                <div className="flex items-center mb-2">
+                  <Plane className="w-5 h-5 text-gold mr-2" />
+                  <h3 className="text-lg font-bold font-gilda">Book Tickets</h3>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-200 text-sm flex-1 mr-4">
+                    Found a reward flight? We'll book it for you using points at incredible savings.
+                  </p>
+                  <Link
+                    to="/book-tickets"
+                    className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm whitespace-nowrap"
+                  >
+                    Book Flights
+                  </Link>
+                </div>
               </div>
-              <p className="text-gray-200 mb-3 text-sm">
-                Found a reward flight? We'll book it for you using points at incredible savings.
-              </p>
-              <Link
-                to="/book-tickets"
-                className="bg-gold hover:bg-gold-dark text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 text-sm inline-block"
-              >
-                Book Flights
-              </Link>
             </div>
           </div>
 

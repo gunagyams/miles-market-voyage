@@ -43,18 +43,6 @@ const Header = () => {
               Airlines
             </Link>
             <Link
-              to="/#calculator"
-              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
-            >
-              Calculator
-            </Link>
-            <Link
-              to="/reviews"
-              className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
-            >
-              Reviews
-            </Link>
-            <Link
               to="/book-tickets"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
@@ -86,10 +74,10 @@ const Header = () => {
           {/* Right Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link
-              to="/#about"
+              to="/reviews"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
-              About Us
+              Reviews
             </Link>
             <Link
               to="/#quote"
@@ -138,20 +126,6 @@ const Header = () => {
                 Airlines
               </Link>
               <Link
-                to="/#calculator"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={closeMenu}
-              >
-                Calculator
-              </Link>
-              <Link
-                to="/reviews"
-                className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
-                onClick={closeMenu}
-              >
-                Reviews
-              </Link>
-              <Link
                 to="/book-tickets"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={closeMenu}
@@ -159,11 +133,11 @@ const Header = () => {
                 Book
               </Link>
               <Link
-                to="/#about"
+                to="/reviews"
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={closeMenu}
               >
-                About Us
+                Reviews
               </Link>
               <Link
                 to="/#quote"
