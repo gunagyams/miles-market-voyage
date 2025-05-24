@@ -1,13 +1,15 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
-import { ShieldCheck, Award, Star } from "lucide-react";
+import { ShieldCheck, Award, Star, Plane, CreditCard } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
     <section className="relative min-h-screen text-white pt-24 flex items-center bg-[url('/img/upscalemedia-transformed.png')] bg-cover bg-center">
       <div className="absolute inset-0 bg-gradient-to-br from-black/80 to-black/40 z-0"></div>
       <div className="container-custom z-10 px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center animate-fade-in">
+        <div className="max-w-4xl mx-auto text-center animate-fade-in">
           <div className="inline-block mb-6">
             <div className={cn("h-1 w-24 mx-auto bg-gold mb-1")}></div>
             <div className={cn("h-1 w-16 mx-auto bg-gold")}></div>
@@ -24,19 +26,57 @@ const Hero = () => {
             real airline miles.
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href="#airlines"
-              className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
-            >
-              Browse Miles Deals
-            </a>
-            <a
-              href="#quote"
-              className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
-            >
-              Get a Free Quote
-            </a>
+          {/* Two Main Options */}
+          <div className="grid md:grid-cols-2 gap-6 mb-10">
+            {/* Buy Miles Section */}
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
+              <div className="bg-gold/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <CreditCard className="w-8 h-8 text-gold" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 font-gilda">Buy Miles</h3>
+              <p className="text-gray-200 mb-6">
+                Purchase airline miles directly at unbeatable rates from top airlines worldwide.
+              </p>
+              <div className="flex flex-col gap-3">
+                <a
+                  href="#airlines"
+                  className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                >
+                  Browse Miles Deals
+                </a>
+                <a
+                  href="#quote"
+                  className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                >
+                  Get Miles Quote
+                </a>
+              </div>
+            </div>
+
+            {/* Book Tickets Section */}
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
+              <div className="bg-gold/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Plane className="w-8 h-8 text-gold" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 font-gilda">Book Tickets</h3>
+              <p className="text-gray-200 mb-6">
+                Choose your preferred flights and let us book them for you using points at incredible savings.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/book-tickets"
+                  className="bg-gold hover:bg-gold-dark text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                >
+                  Book Flight Tickets
+                </Link>
+                <Link
+                  to="/book-tickets#quote"
+                  className="bg-transparent hover:bg-white/10 border border-white text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                >
+                  Get Booking Quote
+                </Link>
+              </div>
+            </div>
           </div>
 
           <div className="mt-12">
