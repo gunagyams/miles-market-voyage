@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, Award, Star, CreditCard, Plane } from "lucide-react";
@@ -18,7 +17,7 @@ const Hero = () => {
             <div className={cn("h-1 w-16 mx-auto bg-gold")}></div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight font-gilda">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight font-cardo">
             <span className="block">Buy Miles.</span>
             <span className="block">Book Luxury. Fly For Less.</span>
           </h1>
@@ -29,21 +28,21 @@ const Hero = () => {
             real airline miles.
           </p>
 
-          {/* Two Main Options - Updated Design */}
-          <div className="grid md:grid-cols-2 gap-8 mb-16 max-w-5xl mx-auto">
+          {/* Two Main Options - Compact Design */}
+          <div className="grid md:grid-cols-2 gap-4 mb-16 max-w-4xl mx-auto">
             {/* Buy Miles Section */}
-            <div className="bg-gradient-to-br from-gold/20 to-gold/10 backdrop-blur-md rounded-2xl p-8 border-2 border-gold/50 shadow-2xl hover:border-gold transition-all duration-300 transform hover:scale-105">
+            <div className="bg-gradient-to-br from-gold/20 to-gold/10 backdrop-blur-md rounded-xl p-6 border-2 border-gold/50 shadow-2xl hover:border-gold transition-all duration-300 transform hover:scale-105">
               <div className="text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <CreditCard className="w-8 h-8 text-gold mr-3" />
-                  <h3 className="text-2xl font-bold font-gilda text-gold">Buy Miles</h3>
+                <div className="flex items-center justify-center mb-3">
+                  <CreditCard className="w-6 h-6 text-gold mr-2" />
+                  <h3 className="text-lg font-bold font-jakarta text-gold">Buy Miles</h3>
                 </div>
-                <p className="text-gray-200 text-lg mb-8 leading-relaxed">
+                <p className="text-gray-200 text-sm mb-6 leading-relaxed">
                   Purchase airline miles from top carriers
                 </p>
                 <a
                   href="#airlines"
-                  className="inline-block bg-gold hover:bg-gold-dark text-black font-bold py-4 px-8 rounded-xl transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="inline-block bg-gold hover:bg-gold-dark text-black font-bold py-3 px-6 rounded-xl transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Browse Miles
                 </a>
@@ -51,18 +50,18 @@ const Hero = () => {
             </div>
 
             {/* Book Tickets Section */}
-            <div className="bg-gradient-to-br from-gold/20 to-gold/10 backdrop-blur-md rounded-2xl p-8 border-2 border-gold/50 shadow-2xl hover:border-gold transition-all duration-300 transform hover:scale-105">
+            <div className="bg-gradient-to-br from-gold/20 to-gold/10 backdrop-blur-md rounded-xl p-6 border-2 border-gold/50 shadow-2xl hover:border-gold transition-all duration-300 transform hover:scale-105">
               <div className="text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <Plane className="w-8 h-8 text-gold mr-3" />
-                  <h3 className="text-2xl font-bold font-gilda text-gold">Book Tickets</h3>
+                <div className="flex items-center justify-center mb-3">
+                  <Plane className="w-6 h-6 text-gold mr-2" />
+                  <h3 className="text-lg font-bold font-jakarta text-gold">Book Tickets</h3>
                 </div>
-                <p className="text-gray-200 text-lg mb-8 leading-relaxed">
+                <p className="text-gray-200 text-sm mb-6 leading-relaxed">
                   Found a reward flight? Use your points to book it
                 </p>
                 <button
                   onClick={() => setIsBookingModalOpen(true)}
-                  className="inline-block bg-gold hover:bg-gold-dark text-black font-bold py-4 px-8 rounded-xl transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="inline-block bg-gold hover:bg-gold-dark text-black font-bold py-3 px-6 rounded-xl transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Book Flights
                 </button>

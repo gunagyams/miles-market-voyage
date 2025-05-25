@@ -65,7 +65,7 @@ export default {
         },
       },
       fontFamily: {
-        gilda: ["Gilda Display", "serif"],
+        cardo: ["Cardo", "serif"],
         jakarta: ["Plus Jakarta Sans", "sans-serif"],
       },
       borderRadius: {

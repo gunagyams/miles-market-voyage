@@ -46,7 +46,7 @@ const Header = () => {
               to="/book-tickets"
               className="text-navy hover:text-gold transition-colors duration-200 font-jakarta text-sm uppercase tracking-wide font-medium"
             >
-              Book
+              Book Tickets
             </Link>
           </nav>
 
@@ -130,7 +130,7 @@ const Header = () => {
                 className="block text-navy hover:text-gold transition-colors duration-200 py-2 font-jakarta text-sm uppercase tracking-wide"
                 onClick={closeMenu}
               >
-                Book
+                Book Tickets
               </Link>
               <Link
                 to="/reviews"
