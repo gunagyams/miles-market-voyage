@@ -159,6 +159,7 @@ export const saveFlightBooking = async (formData: any) => {
     airline_name: formData.airline,
     points_required: formData.points,
     flight_details: formData.flightDetails,
+    screenshot_url: formData.screenshotUrl,
     status: 'new'
   };
 

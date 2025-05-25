@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { Upload, CheckCircle } from 'lucide-react';
+import { fetchEmailSettings, sendBookingEmailNotifications, saveFlightBooking } from '@/utils/bookingEmailUtils';
 
 interface Airline {
   id: string;
@@ -192,21 +193,34 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
         }
       }
 
-      // Save flight booking request to database
-      const { error } = await supabase
-        .from('flight_bookings')
-        .insert({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          airline_name: formData.airlineName,
-          flight_details: formData.flightDetails,
-          screenshot_url: screenshotUrl,
-          points_required: parseInt(formData.pointsRequired),
-        });
+      // Save flight booking to database using the utility function
+      const bookingData = await saveFlightBooking({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        airline: formData.airlineName,
+        points: parseInt(formData.pointsRequired),
+        flightDetails: formData.flightDetails,
+        screenshotUrl: screenshotUrl
+      });
 
-      if (error) throw error;
+      // Fetch email settings and send notifications
+      const emailSettings = await fetchEmailSettings();
+      
+      if (emailSettings.notifications_enabled) {
+        console.log('📧 Sending booking email notifications...');
+        const emailResult = await sendBookingEmailNotifications(bookingData, emailSettings);
+        
+        if (emailResult.success) {
+          console.log('✅ Booking emails sent successfully');
+        } else {
+          console.warn('⚠️ Email notification failed:', emailResult.error);
+          // Don't fail the whole process if email fails
+        }
+      } else {
+        console.log('📧 Email notifications are disabled');
+      }
 
       toast({
         title: "Booking Request Submitted!",
