@@ -31,18 +31,18 @@ const Hero = () => {
           {/* Two Main Options - Premium Glass Design */}
           <div className="flex justify-center gap-6 mb-16 max-w-4xl mx-auto">
             {/* Buy Miles Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 transform hover:scale-105 flex-1 max-w-sm">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 transform hover:scale-105 flex-1 max-w-md">
               <div className="text-left">
-                <div className="flex items-center mb-3">
+                <div className="flex items-center mb-4">
                   <CreditCard className="w-6 h-6 text-gold mr-3" />
-                  <h3 className="text-lg font-semibold font-jakarta text-gold">Buy Miles</h3>
+                  <h3 className="text-xl font-semibold font-jakarta text-gold">Buy Miles</h3>
                 </div>
-                <p className="text-gray-200 text-base mb-4 leading-relaxed">
+                <p className="text-gray-200 text-lg mb-6 leading-relaxed">
                   Purchase airline miles from carriers
                 </p>
                 <a
                   href="#airlines"
-                  className="inline-block bg-gold hover:bg-gold-dark text-black font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="inline-block bg-gold hover:bg-gold-dark text-black font-semibold py-3 px-6 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Browse Miles
                 </a>
@@ -50,21 +50,21 @@ const Hero = () => {
             </div>
 
             {/* Book Tickets Section */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 transform hover:scale-105 flex-1 max-w-sm">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 transform hover:scale-105 flex-1 max-w-md">
               <div className="text-left">
-                <div className="flex items-center mb-3">
+                <div className="flex items-center mb-4">
                   <Plane className="w-6 h-6 text-gold mr-3" />
-                  <h3 className="text-lg font-semibold font-jakarta text-gold">Book Tickets</h3>
+                  <h3 className="text-xl font-semibold font-jakarta text-gold">Book Tickets</h3>
                 </div>
-                <p className="text-gray-200 text-base mb-4 leading-relaxed">
+                <p className="text-gray-200 text-lg mb-6 leading-relaxed">
                   Use your points to book flights
                 </p>
-                <button
-                  onClick={() => setIsBookingModalOpen(true)}
-                  className="inline-block bg-gold hover:bg-gold-dark text-black font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                <Link
+                  to="/book-tickets"
+                  className="inline-block bg-gold hover:bg-gold-dark text-black font-semibold py-3 px-6 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Book Flights
-                </button>
+                </Link>
               </div>
             </div>
           </div>
