@@ -5,7 +5,20 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import BookingGallery from "@/components/BookingGallery";
 import SuccessStories from "@/components/SuccessStories";
 import FlightBookingModal from "@/components/FlightBookingModal";
-import { Plane, Clock, Shield, Star, CheckCircle, Users, Globe, Headphones, Search, MessageSquare, CreditCard, MapPin } from "lucide-react";
+import {
+  Plane,
+  Clock,
+  Shield,
+  Star,
+  CheckCircle,
+  Users,
+  Globe,
+  Headphones,
+  Search,
+  MessageSquare,
+  CreditCard,
+  MapPin,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const BookTickets = () => {
@@ -21,7 +34,8 @@ const BookTickets = () => {
 
     toast({
       title: "WhatsApp Support",
-      description: "Opening WhatsApp to connect you with our flight booking expert.",
+      description:
+        "Opening WhatsApp to connect you with our flight booking expert.",
       className: "bg-white border-green-400",
     });
   };
@@ -29,29 +43,30 @@ const BookTickets = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      
+
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] text-white pt-24 flex items-center bg-[url('/img/upscalemedia-transformed.png')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-navy/90 to-black/60 z-0"></div>
+      <section className="relative min-h-[60vh] text-white pt-24 flex items-center bg-[url('https://images.unsplash.com/photo-1706921271123-c3bef3d8a8c1?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-black/80 to-black/60 z-0"></div>
         <div className="container-custom z-10 px-6 py-16">
           <div className="max-w-4xl mx-auto text-center animate-fade-in">
             <div className="inline-block mb-6">
               <div className="h-1 w-24 mx-auto bg-gold mb-1"></div>
               <div className="h-1 w-16 mx-auto bg-gold"></div>
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight font-gilda">
               <span className="block">Found Your Dream Flight?</span>
               <span className="block text-gold">We'll Book It For You</span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl mb-8 text-gray-100 font-jakarta">
-              Share your reward flight details with us and we'll book it using points at unbeatable prices
+              Share your reward flight details with us and we'll book it using
+              points at unbeatable prices
             </p>
-            
+
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg">
               <p className="text-lg font-jakarta text-gold font-semibold">
-                No need to buy miles - we handle everything for you
+                Save Upto 60% On Flight Costs
               </p>
             </div>
           </div>
@@ -79,9 +94,12 @@ const BookTickets = () => {
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 1
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Find Your Reward Flight</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">
+                Find Your Reward Flight
+              </h3>
               <p className="text-gray-600 font-jakarta">
-                Search for award flights on any airline's website. Found something you like? Perfect!
+                Search for award flights on any airline's website. Found
+                something you like? Perfect!
               </p>
             </div>
 
@@ -93,9 +111,12 @@ const BookTickets = () => {
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 2
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">Share Flight Details</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">
+                Share Flight Details
+              </h3>
               <p className="text-gray-600 font-jakarta">
-                Send us the flight details, dates, and passenger information. We'll give you an instant quote.
+                Send us the flight details, dates, and passenger information.
+                We'll give you an instant quote.
               </p>
             </div>
 
@@ -107,9 +128,12 @@ const BookTickets = () => {
               <div className="bg-gold text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
                 3
               </div>
-              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">We Book & You Fly</h3>
+              <h3 className="text-xl font-bold mb-4 text-navy font-gilda">
+                We Book & You Fly
+              </h3>
               <p className="text-gray-600 font-jakarta">
-                Pay our discounted rate and we'll book your flight using points. Receive your tickets and fly in luxury!
+                Pay our discounted rate and we'll book your flight using points.
+                Receive your tickets and fly in luxury!
               </p>
             </div>
           </div>
@@ -124,7 +148,8 @@ const BookTickets = () => {
               Ready to Book Your Flight?
             </h2>
             <p className="text-lg text-gray-600 font-jakarta mb-8">
-              Found your perfect reward flight? Share the details and we'll book it using points at incredible savings.
+              Found your perfect reward flight? Share the details and we'll book
+              it using points at incredible savings.
             </p>
             <button
               onClick={() => setIsModalOpen(true)}
@@ -137,9 +162,9 @@ const BookTickets = () => {
       </section>
 
       {/* Flight Booking Form */}
-      <FlightBookingModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <FlightBookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
 
       {/* Luxury Gallery */}
@@ -160,74 +185,90 @@ const BookTickets = () => {
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">No Miles Purchase Required</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">
+                      No Miles Purchase Required
+                    </h3>
                     <p className="text-gray-600 font-jakarta">
-                      You don't need to buy miles yourself. We handle the entire booking process using our points inventory.
+                      You don't need to buy miles yourself. We handle the entire
+                      booking process using our points inventory.
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Massive Savings</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">
+                      Massive Savings
+                    </h3>
                     <p className="text-gray-600 font-jakarta">
-                      Save 60-80% compared to traditional booking sites by leveraging point redemptions.
+                      Save 60-80% compared to traditional booking sites by
+                      leveraging point redemptions.
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Expert Service</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">
+                      Expert Service
+                    </h3>
                     <p className="text-gray-600 font-jakarta">
-                      Our team of airline experts ensures smooth booking and handles any changes or issues.
+                      Our team of airline experts ensures smooth booking and
+                      handles any changes or issues.
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <CheckCircle className="w-6 h-6 text-gold mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">Instant Quotes</h3>
+                    <h3 className="text-xl font-bold text-navy mb-2 font-gilda">
+                      Instant Quotes
+                    </h3>
                     <p className="text-gray-600 font-jakarta">
-                      Get pricing within minutes of sharing your flight details with our quick quote system.
+                      Get pricing within minutes of sharing your flight details
+                      with our quick quote system.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-br from-navy to-navy-dark rounded-2xl p-8 text-white">
               <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold mb-4 font-gilda">Ready to Book?</h3>
+                <h3 className="text-3xl font-bold mb-4 font-gilda">
+                  Ready to Book?
+                </h3>
                 <p className="text-gray-200 font-jakarta">
                   Start your luxury travel experience today
                 </p>
               </div>
-              
+
               <div className="space-y-4">
-                <button 
+                <button
                   onClick={() => setIsModalOpen(true)}
                   className="w-full bg-gold hover:bg-gold-dark text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta"
                 >
                   Book Your Flight
                 </button>
-                <button 
+                <button
                   onClick={handleSpeakToExpert}
                   className="w-full bg-transparent hover:bg-white/10 border border-white text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200 font-jakarta"
                 >
                   Speak to Expert
                 </button>
               </div>
-              
+
               <div className="mt-8 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Star className="w-5 h-5 text-gold" />
                   <span className="font-bold">4.9/5 Rating</span>
                 </div>
-                <p className="text-sm text-gray-300">Trusted by 10,000+ travelers</p>
+                <p className="text-sm text-gray-300">
+                  Trusted by 10,000+ travelers
+                </p>
               </div>
             </div>
           </div>
@@ -236,11 +277,11 @@ const BookTickets = () => {
 
       <Footer />
       <FloatingWhatsApp />
-      
+
       {/* Flight Booking Modal */}
-      <FlightBookingModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <FlightBookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );
