@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
@@ -8,15 +7,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { Upload, CheckCircle } from 'lucide-react';
+import { Upload, CheckCircle, Plane, CalendarIcon, ArrowUpDown } from 'lucide-react';
 import { fetchEmailSettings, sendBookingEmailNotifications, saveFlightBooking } from '@/utils/bookingEmailUtils';
+import { format } from 'date-fns';
 
 interface Airline {
   id: string;
   name: string;
+}
+
+interface Airport {
+  code: string;
+  name: string;
+  city: string;
+  country: string;
 }
 
 interface FlightBookingModalProps {
@@ -31,12 +40,29 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [phoneValid, setPhoneValid] = useState(true);
+  const [departureDate, setDepartureDate] = useState<Date>();
+  
+  // Popular airports for selection
+  const popularAirports: Airport[] = [
+    { code: 'DEL', name: 'Delhi Airport', city: 'Delhi', country: 'India' },
+    { code: 'BOM', name: 'Chhatrapati Shivaji International Airport', city: 'Mumbai', country: 'India' },
+    { code: 'DXB', name: 'Dubai International Airport', city: 'Dubai', country: 'UAE' },
+    { code: 'JFK', name: 'John F. Kennedy International Airport', city: 'New York', country: 'USA' },
+    { code: 'LHR', name: 'Heathrow Airport', city: 'London', country: 'UK' },
+    { code: 'CDG', name: 'Charles de Gaulle Airport', city: 'Paris', country: 'France' },
+    { code: 'SIN', name: 'Singapore Changi Airport', city: 'Singapore', country: 'Singapore' },
+    { code: 'NRT', name: 'Narita International Airport', city: 'Tokyo', country: 'Japan' },
+    { code: 'LAX', name: 'Los Angeles International Airport', city: 'Los Angeles', country: 'USA' },
+    { code: 'SYD', name: 'Sydney Kingsford Smith Airport', city: 'Sydney', country: 'Australia' },
+  ];
   
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
+    fromAirport: '',
+    toAirport: '',
     airlineName: '',
     flightDetails: '',
     pointsRequired: '',
@@ -82,6 +108,10 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
 
   const handleSelectChange = (value: string) => {
     setFormData(prev => ({ ...prev, airlineName: value }));
+  };
+
+  const handleAirportChange = (field: 'fromAirport' | 'toAirport', value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePhoneChange = (value: string, country: any) => {
@@ -145,6 +175,8 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
       lastName: '',
       email: '',
       phone: '',
+      fromAirport: '',
+      toAirport: '',
       airlineName: airlines.length > 0 ? airlines[0].name : '',
       flightDetails: '',
       pointsRequired: '',
@@ -152,10 +184,19 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
     });
     setUploadedFile(null);
     setPhoneValid(true);
+    setDepartureDate(undefined);
     
     // Reset file input
     const fileInput = document.getElementById('modal-screenshot') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
+  };
+
+  const swapAirports = () => {
+    setFormData(prev => ({
+      ...prev,
+      fromAirport: prev.toAirport,
+      toAirport: prev.fromAirport
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -175,6 +216,15 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
       toast({
         title: "Invalid Points",
         description: "Please enter a valid number for points required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.fromAirport || !formData.toAirport || !departureDate) {
+      toast({
+        title: "Incomplete Information",
+        description: "Please select a departure airport, destination airport, and departure date.",
         variant: "destructive",
       });
       return;
@@ -246,168 +296,290 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-navy font-gilda">
-            Request Flight Booking
+          <DialogTitle className="text-2xl font-bold text-navy font-gilda text-center">
+            Book Your Flight
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Fields */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="firstName" className="text-navy font-medium">
-                First Name *
-              </Label>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                className="mt-1"
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Flight Route Selection */}
+          <div className="bg-gray-50 rounded-2xl p-4 space-y-4">
+            {/* From Airport */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600 font-medium">
+                <Plane className="w-4 h-4" />
+                <span>FROM</span>
+              </div>
+              <Select value={formData.fromAirport} onValueChange={(value) => handleAirportChange('fromAirport', value)}>
+                <SelectTrigger className="bg-white border-0 text-left h-16 text-lg font-bold">
+                  <SelectValue placeholder="Select departure airport">
+                    {formData.fromAirport && (
+                      <div>
+                        <div className="font-bold text-lg">{popularAirports.find(a => a.code === formData.fromAirport)?.city} {formData.fromAirport}</div>
+                        <div className="text-sm text-gray-600 font-normal">{popularAirports.find(a => a.code === formData.fromAirport)?.name}</div>
+                      </div>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {popularAirports.map((airport) => (
+                    <SelectItem key={airport.code} value={airport.code}>
+                      <div>
+                        <div className="font-bold">{airport.city} {airport.code}</div>
+                        <div className="text-sm text-gray-600">{airport.name}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div>
-              <Label htmlFor="lastName" className="text-navy font-medium">
-                Last Name *
-              </Label>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                className="mt-1"
-              />
-            </div>
-          </div>
 
-          {/* Contact Fields */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="email" className="text-navy font-medium">
-                Email Address *
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="mt-1"
-              />
+            {/* Swap Button */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={swapAirports}
+                className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors"
+              >
+                <ArrowUpDown className="w-4 h-4 text-blue-600" />
+              </button>
             </div>
-            <div>
-              <Label className="text-navy font-medium">
-                Phone Number *
-              </Label>
-              <PhoneInput
-                country={formData.countryCode}
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                inputStyle={{
-                  width: '100%',
-                  height: '40px',
-                  fontSize: '14px',
-                  border: phoneValid ? '1px solid #e2e8f0' : '1px solid #ef4444',
-                }}
-                containerStyle={{ marginTop: '4px' }}
-              />
-              {!phoneValid && (
-                <p className="text-sm text-red-500 mt-1">Please enter a valid phone number</p>
-              )}
-            </div>
-          </div>
 
-          {/* Airline Selection */}
-          <div>
-            <Label className="text-navy font-medium">
-              Airline *
-            </Label>
-            <Select value={formData.airlineName} onValueChange={handleSelectChange} disabled={isLoadingAirlines}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder={isLoadingAirlines ? "Loading airlines..." : "Select an airline"} />
-              </SelectTrigger>
-              <SelectContent>
-                {airlines.map((airline) => (
-                  <SelectItem key={airline.id} value={airline.name}>
-                    {airline.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* To Airport */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600 font-medium">
+                <Plane className="w-4 h-4 rotate-90" />
+                <span>TO</span>
+              </div>
+              <Select value={formData.toAirport} onValueChange={(value) => handleAirportChange('toAirport', value)}>
+                <SelectTrigger className="bg-white border-0 text-left h-16 text-lg font-bold">
+                  <SelectValue placeholder="Select destination airport">
+                    {formData.toAirport && (
+                      <div>
+                        <div className="font-bold text-lg">{popularAirports.find(a => a.code === formData.toAirport)?.city} {formData.toAirport}</div>
+                        <div className="text-sm text-gray-600 font-normal">{popularAirports.find(a => a.code === formData.toAirport)?.name}</div>
+                      </div>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {popularAirports.map((airport) => (
+                    <SelectItem key={airport.code} value={airport.code}>
+                      <div>
+                        <div className="font-bold">{airport.city} {airport.code}</div>
+                        <div className="text-sm text-gray-600">{airport.name}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Departure Date */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600 font-medium">
+                <CalendarIcon className="w-4 h-4" />
+                <span>DEPARTURE DATE</span>
+              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "bg-white border-0 text-left h-16 text-lg font-bold justify-start",
+                      !departureDate && "text-muted-foreground"
+                    )}
+                  >
+                    {departureDate ? (
+                      <div>
+                        <div className="font-bold text-lg">{format(departureDate, "d MMM")}</div>
+                        <div className="text-sm text-gray-600 font-normal">{format(departureDate, "EEE, yyyy")}</div>
+                      </div>
+                    ) : (
+                      <span>Select departure date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={departureDate}
+                    onSelect={setDepartureDate}
+                    disabled={(date) => date < new Date()}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
 
           {/* Flight Details */}
-          <div>
-            <Label htmlFor="flightDetails" className="text-navy font-medium">
-              Flight Details *
-            </Label>
-            <Textarea
-              id="flightDetails"
-              name="flightDetails"
-              value={formData.flightDetails}
-              onChange={handleChange}
-              placeholder="Please provide detailed flight information: departure/arrival cities, dates, times, class of service, number of passengers, etc."
-              required
-              rows={3}
-              className="mt-1"
-            />
-          </div>
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-navy">Flight Details</h3>
+            
+            {/* Airline Selection */}
+            <div>
+              <Label className="text-navy font-medium">
+                Preferred Airline *
+              </Label>
+              <Select value={formData.airlineName} onValueChange={handleSelectChange} disabled={isLoadingAirlines}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder={isLoadingAirlines ? "Loading airlines..." : "Select an airline"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {airlines.map((airline) => (
+                    <SelectItem key={airline.id} value={airline.name}>
+                      {airline.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Points Required */}
-          <div>
-            <Label htmlFor="pointsRequired" className="text-navy font-medium">
-              Points Required for This Flight *
-            </Label>
-            <Input
-              id="pointsRequired"
-              name="pointsRequired"
-              type="number"
-              value={formData.pointsRequired}
-              onChange={handleChange}
-              placeholder="e.g., 75000"
-              required
-              min="1"
-              className="mt-1"
-            />
-          </div>
-
-          {/* Screenshot Upload */}
-          <div>
-            <Label htmlFor="modal-screenshot" className="text-navy font-medium">
-              Flight Screenshot (Optional)
-            </Label>
-            <div className="mt-1">
-              <Input
-                id="modal-screenshot"
-                type="file"
-                onChange={handleFileChange}
-                accept=".jpg,.jpeg,.png"
-                className="hidden"
+            {/* Additional Flight Details */}
+            <div>
+              <Label htmlFor="flightDetails" className="text-navy font-medium">
+                Additional Flight Information *
+              </Label>
+              <Textarea
+                id="flightDetails"
+                name="flightDetails"
+                value={formData.flightDetails}
+                onChange={handleChange}
+                placeholder="Please provide: class of service (Economy/Business/First), number of passengers, any specific flight preferences, etc."
+                required
+                rows={3}
+                className="mt-1"
               />
-              <label
-                htmlFor="modal-screenshot"
-                className="flex items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gold transition-colors"
-              >
-                <div className="text-center">
-                  {uploadedFile ? (
-                    <div className="flex items-center gap-2 text-green-600">
-                      <CheckCircle className="w-4 h-4" />
-                      <span className="text-sm font-medium">{uploadedFile.name}</span>
-                    </div>
-                  ) : (
-                    <div>
-                      <Upload className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-                      <p className="text-sm text-gray-600">Click to upload screenshot</p>
-                      <p className="text-xs text-gray-400">JPG, PNG (max 5MB)</p>
-                    </div>
-                  )}
-                </div>
-              </label>
+            </div>
+
+            {/* Points Required */}
+            <div>
+              <Label htmlFor="pointsRequired" className="text-navy font-medium">
+                Points Required for This Flight *
+              </Label>
+              <Input
+                id="pointsRequired"
+                name="pointsRequired"
+                type="number"
+                value={formData.pointsRequired}
+                onChange={handleChange}
+                placeholder="e.g., 75000"
+                required
+                min="1"
+                className="mt-1"
+              />
+            </div>
+
+            {/* Screenshot Upload */}
+            <div>
+              <Label htmlFor="modal-screenshot" className="text-navy font-medium">
+                Flight Screenshot (Optional)
+              </Label>
+              <div className="mt-1">
+                <Input
+                  id="modal-screenshot"
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".jpg,.jpeg,.png"
+                  className="hidden"
+                />
+                <label
+                  htmlFor="modal-screenshot"
+                  className="flex items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gold transition-colors"
+                >
+                  <div className="text-center">
+                    {uploadedFile ? (
+                      <div className="flex items-center gap-2 text-green-600">
+                        <CheckCircle className="w-4 h-4" />
+                        <span className="text-sm font-medium">{uploadedFile.name}</span>
+                      </div>
+                    ) : (
+                      <div>
+                        <Upload className="w-6 h-6 text-gray-400 mx-auto mb-1" />
+                        <p className="text-sm text-gray-600">Click to upload screenshot</p>
+                        <p className="text-xs text-gray-400">JPG, PNG (max 5MB)</p>
+                      </div>
+                    )}
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Personal Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-navy">Personal Information</h3>
+            
+            {/* Name Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName" className="text-navy font-medium">
+                  First Name *
+                </Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="lastName" className="text-navy font-medium">
+                  Last Name *
+                </Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            {/* Contact Fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="email" className="text-navy font-medium">
+                  Email Address *
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-navy font-medium">
+                  Phone Number *
+                </Label>
+                <PhoneInput
+                  country={formData.countryCode}
+                  value={formData.phone}
+                  onChange={handlePhoneChange}
+                  inputStyle={{
+                    width: '100%',
+                    height: '40px',
+                    fontSize: '14px',
+                    border: phoneValid ? '1px solid #e2e8f0' : '1px solid #ef4444',
+                  }}
+                  containerStyle={{ marginTop: '4px' }}
+                />
+                {!phoneValid && (
+                  <p className="text-sm text-red-500 mt-1">Please enter a valid phone number</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -415,10 +587,10 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
           <div className="pt-4">
             <Button
               type="submit"
-              disabled={isSubmitting || !phoneValid || isLoadingAirlines}
+              disabled={isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate}
               className={cn(
-                "w-full py-3 px-6 rounded-md font-medium text-white transition-colors duration-200",
-                (isSubmitting || !phoneValid || isLoadingAirlines) 
+                "w-full py-3 px-6 rounded-lg font-medium text-white transition-colors duration-200",
+                (isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate) 
                   ? "bg-gray-400" 
                   : "bg-gold hover:bg-gold-dark"
               )}
