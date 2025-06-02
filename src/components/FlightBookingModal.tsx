@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchEmailSettings, sendBookingEmailNotifications, saveFlightBooking } from '@/utils/bookingEmailUtils';
 import { format } from 'date-fns';
@@ -284,15 +283,15 @@ Additional Details: ${formData.flightDetails}
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={cn(
-        "w-full mx-auto p-0 overflow-hidden bg-white",
+        "w-full mx-auto p-0 overflow-hidden bg-white max-h-[90vh]",
         isMobile 
-          ? "max-w-sm h-[90vh] max-h-[600px] rounded-t-2xl sm:rounded-2xl" 
-          : "max-w-3xl h-[85vh] max-h-[700px] rounded-2xl"
+          ? "max-w-sm rounded-t-2xl sm:rounded-2xl" 
+          : "max-w-3xl rounded-2xl"
       )}>
-        <div className="flex flex-col h-full">
-          {/* Header - Remove duplicate close button */}
+        <div className="flex flex-col h-full max-h-[90vh]">
+          {/* Header */}
           <div className={cn(
-            "flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white",
+            "flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0",
             isMobile ? "p-4" : "p-6"
           )}>
             <div>
@@ -306,17 +305,9 @@ Additional Details: ${formData.flightDetails}
                 <p className="text-blue-100 text-sm mt-1">Find the perfect flight for your journey</p>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0 hover:bg-white/20 rounded-full text-white"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
 
-          {/* Content - Fixed scrolling */}
+          {/* Content - Scrollable */}
           <div className="flex-1 overflow-y-auto">
             <form onSubmit={handleSubmit} className={cn("space-y-6", isMobile ? "p-4" : "p-6")}>
               {/* Flight Route Section */}
@@ -357,7 +348,7 @@ Additional Details: ${formData.flightDetails}
           </div>
 
           {/* Footer */}
-          <div className={cn("border-t border-gray-100 bg-gray-50", isMobile ? "p-4" : "p-6")}>
+          <div className={cn("border-t border-gray-100 bg-gray-50 flex-shrink-0", isMobile ? "p-4" : "p-6")}>
             <Button
               type="submit"
               disabled={isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate}
