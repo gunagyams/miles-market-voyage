@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
@@ -18,6 +17,7 @@ import { Upload, CheckCircle, Plane, CalendarIcon, ArrowUpDown, X } from 'lucide
 import { fetchEmailSettings, sendBookingEmailNotifications, saveFlightBooking } from '@/utils/bookingEmailUtils';
 import { format } from 'date-fns';
 import { getAirportByIata } from '@/utils/airportsApi';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Airline {
   id: string;
@@ -31,6 +31,7 @@ interface FlightBookingModalProps {
 
 const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose }) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [isLoadingAirlines, setIsLoadingAirlines] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -290,21 +291,34 @@ Additional Details: ${formData.flightDetails}
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-lg mx-auto h-[95vh] max-h-[800px] p-0 overflow-hidden bg-white rounded-t-3xl sm:rounded-3xl">
+      <DialogContent className={cn(
+        "w-full mx-auto p-0 overflow-hidden bg-white",
+        isMobile 
+          ? "max-w-sm h-[90vh] max-h-[600px] rounded-t-2xl sm:rounded-2xl" 
+          : "max-w-2xl h-[85vh] max-h-[700px] rounded-2xl"
+      )}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100">
+          <div className={cn(
+            "flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white",
+            isMobile ? "p-4" : "p-6"
+          )}>
             <div>
-              <DialogTitle className="text-2xl font-bold text-gray-900">
+              <DialogTitle className={cn(
+                "font-bold text-white",
+                isMobile ? "text-lg" : "text-2xl"
+              )}>
                 Book Your Flight
               </DialogTitle>
-              <p className="text-sm text-gray-500 mt-1">Find the perfect flight for your journey</p>
+              {!isMobile && (
+                <p className="text-blue-100 text-sm mt-1">Find the perfect flight for your journey</p>
+              )}
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
+              className="h-8 w-8 p-0 hover:bg-white/20 rounded-full text-white"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -312,59 +326,82 @@ Additional Details: ${formData.flightDetails}
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto">
-            <form onSubmit={handleSubmit} className="p-6 space-y-8">
-              {/* Flight Route Card */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 space-y-6">
-                <div className="flex items-center gap-2 text-blue-700">
-                  <Plane className="w-5 h-5" />
-                  <span className="font-semibold">Flight Details</span>
+            <form onSubmit={handleSubmit} className={cn("space-y-6", isMobile ? "p-4" : "p-6")}>
+              {/* Flight Route Section */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-4">
+                <div className="flex items-center gap-2 text-blue-700 mb-3">
+                  <Plane className="w-4 h-4" />
+                  <span className="font-semibold text-sm">Flight Route</span>
                 </div>
 
-                {/* From Airport */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>FROM</span>
+                {/* From/To Airports - Side by side on desktop */}
+                <div className={cn(
+                  "gap-3",
+                  isMobile ? "space-y-3" : "grid grid-cols-2"
+                )}>
+                  {/* From Airport */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1 text-xs font-medium text-gray-600">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>FROM</span>
+                    </div>
+                    <AirportSelector
+                      value={formData.fromAirport}
+                      onValueChange={(value) => handleAirportChange('fromAirport', value)}
+                      placeholder="Departure"
+                      className="bg-white border-gray-200 h-12"
+                    />
                   </div>
-                  <AirportSelector
-                    value={formData.fromAirport}
-                    onValueChange={(value) => handleAirportChange('fromAirport', value)}
-                    placeholder="Select departure airport"
-                    className="bg-white border-gray-200"
-                  />
-                </div>
 
-                {/* Swap Button */}
-                <div className="flex justify-center">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={swapAirports}
-                    className="h-10 w-10 rounded-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 transition-all"
-                  >
-                    <ArrowUpDown className="h-4 w-4 text-blue-600" />
-                  </Button>
-                </div>
+                  {/* Swap Button - Center for desktop, separate row for mobile */}
+                  {isMobile && (
+                    <div className="flex justify-center py-1">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={swapAirports}
+                        className="h-8 w-8 rounded-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50"
+                      >
+                        <ArrowUpDown className="h-3 w-3 text-blue-600" />
+                      </Button>
+                    </div>
+                  )}
 
-                {/* To Airport */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span>TO</span>
+                  {/* To Airport */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1 text-xs font-medium text-gray-600">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span>TO</span>
+                    </div>
+                    <AirportSelector
+                      value={formData.toAirport}
+                      onValueChange={(value) => handleAirportChange('toAirport', value)}
+                      placeholder="Destination"
+                      className="bg-white border-gray-200 h-12"
+                    />
                   </div>
-                  <AirportSelector
-                    value={formData.toAirport}
-                    onValueChange={(value) => handleAirportChange('toAirport', value)}
-                    placeholder="Select destination airport"
-                    className="bg-white border-gray-200"
-                  />
                 </div>
+
+                {/* Desktop Swap Button */}
+                {!isMobile && (
+                  <div className="flex justify-center -mt-2 -mb-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={swapAirports}
+                      className="h-8 w-8 rounded-full border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50"
+                    >
+                      <ArrowUpDown className="h-3 w-3 text-blue-600" />
+                    </Button>
+                  </div>
+                )}
 
                 {/* Departure Date */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                    <CalendarIcon className="w-4 h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1 text-xs font-medium text-gray-600">
+                    <CalendarIcon className="w-3 h-3" />
                     <span>DEPARTURE DATE</span>
                   </div>
                   <Popover>
@@ -372,25 +409,23 @@ Additional Details: ${formData.flightDetails}
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start h-auto p-4 bg-white border-2 hover:border-blue-300 transition-colors text-left",
+                          "w-full justify-start h-12 bg-white border-2 hover:border-blue-300 text-left",
                           !departureDate && "text-gray-500"
                         )}
                       >
-                        <CalendarIcon className="mr-3 h-5 w-5 text-gray-400" />
-                        <div className="flex-1">
-                          {departureDate ? (
-                            <div>
-                              <div className="font-semibold text-lg text-gray-900">
-                                {format(departureDate, "MMM d, yyyy")}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {format(departureDate, "EEEE")}
-                              </div>
+                        <CalendarIcon className="mr-3 h-4 w-4 text-gray-400" />
+                        {departureDate ? (
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-900">
+                              {format(departureDate, "MMM d, yyyy")}
                             </div>
-                          ) : (
-                            <span className="text-gray-500">Select departure date</span>
-                          )}
-                        </div>
+                            <div className="text-xs text-gray-500">
+                              {format(departureDate, "EEEE")}
+                            </div>
+                          </div>
+                        ) : (
+                          <span>Select departure date</span>
+                        )}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -400,7 +435,6 @@ Additional Details: ${formData.flightDetails}
                         onSelect={setDepartureDate}
                         disabled={(date) => date < new Date()}
                         initialFocus
-                        className="pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
@@ -408,31 +442,49 @@ Additional Details: ${formData.flightDetails}
               </div>
 
               {/* Flight Preferences */}
-              <div className="space-y-6">
-                <h3 className="text-lg font-bold text-gray-900">Flight Preferences</h3>
+              <div className="space-y-4">
+                <h3 className="text-base font-bold text-gray-900">Flight Preferences</h3>
                 
-                {/* Airline Selection */}
-                <div className="space-y-2">
-                  <Label className="text-gray-700 font-medium">
-                    Preferred Airline *
-                  </Label>
-                  <Select value={formData.airlineName} onValueChange={handleSelectChange} disabled={isLoadingAirlines}>
-                    <SelectTrigger className="h-12 border-2 hover:border-blue-300 transition-colors">
-                      <SelectValue placeholder={isLoadingAirlines ? "Loading airlines..." : "Select an airline"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {airlines.map((airline) => (
-                        <SelectItem key={airline.id} value={airline.name}>
-                          {airline.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* Airline and Points - Side by side on desktop */}
+                <div className={cn(
+                  "gap-3",
+                  isMobile ? "space-y-3" : "grid grid-cols-2"
+                )}>
+                  <div className="space-y-2">
+                    <Label className="text-gray-700 font-medium text-sm">Preferred Airline *</Label>
+                    <Select value={formData.airlineName} onValueChange={handleSelectChange} disabled={isLoadingAirlines}>
+                      <SelectTrigger className="h-10 border-2 hover:border-blue-300">
+                        <SelectValue placeholder={isLoadingAirlines ? "Loading..." : "Select airline"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {airlines.map((airline) => (
+                          <SelectItem key={airline.id} value={airline.name}>
+                            {airline.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="pointsRequired" className="text-gray-700 font-medium text-sm">Points Required *</Label>
+                    <Input
+                      id="pointsRequired"
+                      name="pointsRequired"
+                      type="number"
+                      value={formData.pointsRequired}
+                      onChange={handleChange}
+                      placeholder="e.g., 75000"
+                      required
+                      min="1"
+                      className="h-10 border-2 hover:border-blue-300 focus:border-blue-500"
+                    />
+                  </div>
                 </div>
 
-                {/* Additional Flight Details */}
+                {/* Flight Details */}
                 <div className="space-y-2">
-                  <Label htmlFor="flightDetails" className="text-gray-700 font-medium">
+                  <Label htmlFor="flightDetails" className="text-gray-700 font-medium text-sm">
                     Additional Flight Information *
                   </Label>
                   <Textarea
@@ -440,34 +492,16 @@ Additional Details: ${formData.flightDetails}
                     name="flightDetails"
                     value={formData.flightDetails}
                     onChange={handleChange}
-                    placeholder="Class of service (Economy/Business/First), number of passengers, specific preferences..."
+                    placeholder="Class of service, number of passengers, preferences..."
                     required
-                    rows={4}
-                    className="border-2 hover:border-blue-300 focus:border-blue-500 transition-colors resize-none"
-                  />
-                </div>
-
-                {/* Points Required */}
-                <div className="space-y-2">
-                  <Label htmlFor="pointsRequired" className="text-gray-700 font-medium">
-                    Points Required for This Flight *
-                  </Label>
-                  <Input
-                    id="pointsRequired"
-                    name="pointsRequired"
-                    type="number"
-                    value={formData.pointsRequired}
-                    onChange={handleChange}
-                    placeholder="e.g., 75000"
-                    required
-                    min="1"
-                    className="h-12 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
+                    rows={3}
+                    className="border-2 hover:border-blue-300 focus:border-blue-500 resize-none"
                   />
                 </div>
 
                 {/* Screenshot Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="modal-screenshot" className="text-gray-700 font-medium">
+                  <Label htmlFor="modal-screenshot" className="text-gray-700 font-medium text-sm">
                     Flight Screenshot (Optional)
                   </Label>
                   <div>
@@ -480,37 +514,32 @@ Additional Details: ${formData.flightDetails}
                     />
                     <label
                       htmlFor="modal-screenshot"
-                      className="flex items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all"
+                      className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50"
                     >
-                      <div className="text-center">
-                        {uploadedFile ? (
-                          <div className="flex items-center gap-2 text-green-600">
-                            <CheckCircle className="w-5 h-5" />
-                            <span className="text-sm font-medium">{uploadedFile.name}</span>
-                          </div>
-                        ) : (
-                          <div>
-                            <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                            <p className="text-sm text-gray-600">Click to upload screenshot</p>
-                            <p className="text-xs text-gray-400">JPG, PNG (max 5MB)</p>
-                          </div>
-                        )}
-                      </div>
+                      {uploadedFile ? (
+                        <div className="flex items-center gap-2 text-green-600">
+                          <CheckCircle className="w-4 h-4" />
+                          <span className="text-sm font-medium">{uploadedFile.name}</span>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1" />
+                          <p className="text-xs text-gray-600">Upload screenshot</p>
+                        </div>
+                      )}
                     </label>
                   </div>
                 </div>
               </div>
 
               {/* Personal Information */}
-              <div className="space-y-6">
-                <h3 className="text-lg font-bold text-gray-900">Personal Information</h3>
+              <div className="space-y-4">
+                <h3 className="text-base font-bold text-gray-900">Personal Information</h3>
                 
                 {/* Name Fields */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-gray-700 font-medium">
-                      First Name *
-                    </Label>
+                    <Label htmlFor="firstName" className="text-gray-700 font-medium text-sm">First Name *</Label>
                     <Input
                       id="firstName"
                       name="firstName"
@@ -518,13 +547,11 @@ Additional Details: ${formData.flightDetails}
                       value={formData.firstName}
                       onChange={handleChange}
                       required
-                      className="h-12 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
+                      className="h-10 border-2 hover:border-blue-300 focus:border-blue-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-gray-700 font-medium">
-                      Last Name *
-                    </Label>
+                    <Label htmlFor="lastName" className="text-gray-700 font-medium text-sm">Last Name *</Label>
                     <Input
                       id="lastName"
                       name="lastName"
@@ -532,17 +559,15 @@ Additional Details: ${formData.flightDetails}
                       value={formData.lastName}
                       onChange={handleChange}
                       required
-                      className="h-12 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
+                      className="h-10 border-2 hover:border-blue-300 focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 {/* Contact Fields */}
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700 font-medium">
-                      Email Address *
-                    </Label>
+                    <Label htmlFor="email" className="text-gray-700 font-medium text-sm">Email Address *</Label>
                     <Input
                       id="email"
                       name="email"
@@ -550,34 +575,32 @@ Additional Details: ${formData.flightDetails}
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="h-12 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
+                      className="h-10 border-2 hover:border-blue-300 focus:border-blue-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-gray-700 font-medium">
-                      Phone Number *
-                    </Label>
+                    <Label className="text-gray-700 font-medium text-sm">Phone Number *</Label>
                     <PhoneInput
                       country={formData.countryCode}
                       value={formData.phone}
                       onChange={handlePhoneChange}
                       inputStyle={{
                         width: '100%',
-                        height: '48px',
-                        fontSize: '16px',
+                        height: '40px',
+                        fontSize: '14px',
                         border: phoneValid ? '2px solid #e5e7eb' : '2px solid #ef4444',
-                        borderRadius: '8px',
-                        paddingLeft: '60px'
+                        borderRadius: '6px',
+                        paddingLeft: '50px'
                       }}
                       containerStyle={{ width: '100%' }}
                       buttonStyle={{
                         border: 'none',
                         backgroundColor: 'transparent',
-                        borderRadius: '8px 0 0 8px'
+                        borderRadius: '6px 0 0 6px'
                       }}
                     />
                     {!phoneValid && (
-                      <p className="text-sm text-red-500">Please enter a valid phone number</p>
+                      <p className="text-xs text-red-500">Please enter a valid phone number</p>
                     )}
                   </div>
                 </div>
@@ -586,17 +609,18 @@ Additional Details: ${formData.flightDetails}
           </div>
 
           {/* Footer */}
-          <div className="p-6 pt-0 border-t border-gray-100">
+          <div className={cn("border-t border-gray-100 bg-gray-50", isMobile ? "p-4" : "p-6")}>
             <Button
               type="submit"
               disabled={isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate}
               onClick={(e) => {
                 e.preventDefault();
-                const form = e.currentTarget.closest('div')?.querySelector('form') as HTMLFormElement;
+                const form = e.currentTarget.closest('div')?.parentElement?.querySelector('form') as HTMLFormElement;
                 form?.requestSubmit();
               }}
               className={cn(
-                "w-full h-14 rounded-xl font-semibold text-lg transition-all duration-200",
+                "w-full font-semibold transition-all duration-200 rounded-lg",
+                isMobile ? "h-12 text-base" : "h-14 text-lg",
                 (isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate) 
                   ? "bg-gray-300 text-gray-500" 
                   : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl"
@@ -604,15 +628,15 @@ Additional Details: ${formData.flightDetails}
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Submitting Request...
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Submitting...
                 </div>
               ) : (
                 "Submit Booking Request"
               )}
             </Button>
-            <p className="text-xs text-gray-500 text-center mt-3">
-              By submitting, you agree to our terms. We'll contact you within 2 hours.
+            <p className="text-xs text-gray-500 text-center mt-2">
+              We'll contact you within 2 hours with your quote.
             </p>
           </div>
         </div>
