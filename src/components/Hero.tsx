@@ -28,8 +28,8 @@ const Hero = () => {
             real airline miles.
           </p>
 
-          {/* Two Main Options - Premium Glass Design */}
-          <div className="flex justify-center gap-6 mb-16 max-w-4xl mx-auto">
+          {/* Two Main Options - Stack on mobile, side by side on desktop */}
+          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16 max-w-4xl mx-auto">
             {/* Buy Miles Section */}
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 transform hover:scale-105 flex-1 max-w-md">
               <div className="text-center">
