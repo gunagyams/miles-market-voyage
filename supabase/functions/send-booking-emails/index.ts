@@ -96,11 +96,19 @@ const handler = async (req: Request): Promise<Response> => {
             <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
               <h2 style="color: #0f172a;">Thank You for Your Flight Booking Request!</h2>
               <p>Hello ${firstName},</p>
-              <p>We've received your request to book a flight with ${airline} using ${points.toLocaleString()} points.</p>
+              <p>We've received your comprehensive flight booking request with ${airline} using ${points.toLocaleString()} points.</p>
               <p>A member of our team will contact you within the next <strong>2 hours</strong> to complete your booking.</p>
               <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border-radius: 5px; border-left: 4px solid #d4af37;">
-                <h3 style="margin: 0 0 10px 0; color: #0f172a;">Flight Details:</h3>
-                <p style="margin: 0; white-space: pre-line;">${flightDetails}</p>
+                <h3 style="margin: 0 0 10px 0; color: #0f172a;">Complete Flight Details:</h3>
+                <div style="margin: 0; white-space: pre-line; line-height: 1.6;">${flightDetails}</div>
+              </div>
+              <div style="margin: 20px 0; padding: 15px; background-color: #f0f9ff; border-radius: 5px; border-left: 4px solid #3b82f6;">
+                <h3 style="margin: 0 0 10px 0; color: #0f172a;">Your Contact Information:</h3>
+                <p style="margin: 5px 0;"><strong>Name:</strong> ${firstName} ${lastName}</p>
+                <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
+                <p style="margin: 5px 0;"><strong>Phone:</strong> +${phone}</p>
+                <p style="margin: 5px 0;"><strong>Preferred Airline:</strong> ${airline}</p>
+                <p style="margin: 5px 0;"><strong>Points Required:</strong> ${points.toLocaleString()}</p>
               </div>
               <p>If you have any questions before we reach out, feel free to reply to this email.</p>
             </div>
@@ -152,26 +160,34 @@ const handler = async (req: Request): Promise<Response> => {
                 <h1 style="color: #0f172a;">New Flight Booking Request</h1>
               </div>
               <div style="margin-bottom: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
-                <h2 style="color: #0f172a;">New Flight Booking Request</h2>
-                <p><strong>Customer Details:</strong></p>
-                <ul style="list-style-type: none; padding-left: 0;">
-                  <li><strong>First Name:</strong> ${firstName}</li>
-                  <li><strong>Last Name:</strong> ${lastName}</li>
-                  <li><strong>Email:</strong> ${email}</li>
-                  <li><strong>Phone:</strong> +${phone}</li>
-                </ul>
-                <p><strong>Booking Details:</strong></p>
-                <ul style="list-style-type: none; padding-left: 0;">
-                  <li><strong>Airline:</strong> ${airline}</li>
-                  <li><strong>Points Required:</strong> ${points.toLocaleString()}</li>
-                </ul>
+                <h2 style="color: #0f172a;">New Comprehensive Flight Booking Request</h2>
+                <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border-radius: 5px; border-left: 4px solid #10b981;">
+                  <h3 style="margin: 0 0 10px 0; color: #0f172a;">Customer Details:</h3>
+                  <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                    <li style="margin: 5px 0;"><strong>First Name:</strong> ${firstName}</li>
+                    <li style="margin: 5px 0;"><strong>Last Name:</strong> ${lastName}</li>
+                    <li style="margin: 5px 0;"><strong>Email:</strong> ${email}</li>
+                    <li style="margin: 5px 0;"><strong>Phone:</strong> +${phone}</li>
+                  </ul>
+                </div>
+                <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border-radius: 5px; border-left: 4px solid #3b82f6;">
+                  <h3 style="margin: 0 0 10px 0; color: #0f172a;">Booking Preferences:</h3>
+                  <ul style="list-style-type: none; padding-left: 0; margin: 0;">
+                    <li style="margin: 5px 0;"><strong>Preferred Airline:</strong> ${airline}</li>
+                    <li style="margin: 5px 0;"><strong>Points Required:</strong> ${points.toLocaleString()}</li>
+                  </ul>
+                </div>
                 <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border-radius: 5px; border-left: 4px solid #d4af37;">
-                  <h3 style="margin: 0 0 10px 0; color: #0f172a;">Flight Details:</h3>
-                  <p style="margin: 0; white-space: pre-line;">${flightDetails}</p>
+                  <h3 style="margin: 0 0 10px 0; color: #0f172a;">Complete Flight Details:</h3>
+                  <div style="margin: 0; white-space: pre-line; line-height: 1.6; background-color: #f9f9f9; padding: 10px; border-radius: 4px;">${flightDetails}</div>
+                </div>
+                <div style="margin: 20px 0; padding: 15px; background-color: #fef3c7; border-radius: 5px; border-left: 4px solid #f59e0b;">
+                  <p style="margin: 0; color: #92400e;"><strong>⏰ Action Required:</strong> Please contact the customer within 2 hours to process this booking request.</p>
                 </div>
               </div>
               <div style="margin-bottom: 20px; font-size: 14px; color: #6b7280;">
                 <p>Please log in to the admin dashboard to view and manage this booking request.</p>
+                <p style="font-size: 12px; color: #9ca3af;">This email was sent automatically from the Cash My Points booking system.</p>
               </div>
             </div>
           `,
