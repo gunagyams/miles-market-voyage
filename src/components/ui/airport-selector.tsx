@@ -110,7 +110,7 @@ export const AirportSelector: React.FC<AirportSelectorProps> = ({
       <PopoverContent className="w-full p-0" align="start">
         <Command>
           <CommandInput
-            placeholder="Search airports by city, airport code, or name..."
+            placeholder="Search by city name (e.g., New York, London, Dubai)..."
             value={searchQuery}
             onValueChange={setSearchQuery}
             className="h-12"
