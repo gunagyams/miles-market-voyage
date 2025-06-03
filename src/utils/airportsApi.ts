@@ -1,4 +1,3 @@
-
 interface Airport {
   iata: string;
   name: string;
@@ -25,69 +24,6 @@ const FALLBACK_AIRPORTS: Airport[] = [
   { iata: 'FRA', name: 'Frankfurt Airport', city: 'Frankfurt', country: 'Germany' },
   { iata: 'AMS', name: 'Amsterdam Airport Schiphol', city: 'Amsterdam', country: 'Netherlands' },
 ];
-
-const fetchAirportsFromAPI = async (): Promise<Airport[]> => {
-  try {
-    console.log('🛩️ Fetching airports from API...');
-    
-    // Using the Airport-codes API (free tier)
-    const response = await fetch('https://api.airport-codes.org/v1/multi', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: {
-          status: 'active',
-          type: 'airport'
-        },
-        limit: 5000
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    if (data.airports && Array.isArray(data.airports)) {
-      const airports: Airport[] = data.airports
-        .filter((airport: any) => airport.iata_code && airport.name && airport.city && airport.country)
-        .map((airport: any) => ({
-          iata: airport.iata_code,
-          name: airport.name,
-          city: airport.city,
-          country: airport.country,
-          state: airport.state
-        }))
-        .slice(0, 3000); // Limit to 3000 for performance
-
-      console.log(`✅ Successfully fetched ${airports.length} airports from API`);
-      return airports;
-    }
-    
-    throw new Error('Invalid API response format');
-  } catch (error) {
-    console.error('❌ Failed to fetch airports from API:', error);
-    
-    // Try alternative free API
-    try {
-      console.log('🔄 Trying alternative API...');
-      const altResponse = await fetch('https://raw.githubusercontent.com/hipo/university-domains-list/master/world_universities_and_domains.json');
-      
-      if (altResponse.ok) {
-        // This is just a fallback - we'll use a comprehensive static list instead
-        throw new Error('Alternative API not suitable');
-      }
-    } catch (altError) {
-      console.error('❌ Alternative API also failed:', altError);
-    }
-    
-    // Use comprehensive static list as final fallback
-    return getComprehensiveAirportList();
-  }
-};
 
 const getComprehensiveAirportList = (): Airport[] => {
   // Comprehensive list of major airports worldwide (expanded)
@@ -326,38 +262,99 @@ const getComprehensiveAirportList = (): Airport[] => {
   ];
 };
 
+// Create a normalized search function
+const normalizeSearchTerm = (term: string): string => {
+  return term.toLowerCase().trim();
+};
+
+const searchTermMatches = (searchTerm: string, text: string): boolean => {
+  const normalizedSearch = normalizeSearchTerm(searchTerm);
+  const normalizedText = normalizeSearchTerm(text);
+  
+  // Check if any word in the search term matches any word in the text
+  const searchWords = normalizedSearch.split(/\s+/);
+  const textWords = normalizedText.split(/\s+/);
+  
+  return searchWords.every(searchWord => 
+    textWords.some(textWord => 
+      textWord.includes(searchWord) || searchWord.includes(textWord)
+    )
+  ) || normalizedText.includes(normalizedSearch);
+};
+
 export const searchAirports = async (query: string): Promise<Airport[]> => {
   try {
     // Check if we need to fetch fresh data
     const now = Date.now();
     if (airportsCache.length === 0 || (now - lastFetchTime) > CACHE_DURATION) {
-      console.log('🔄 Cache expired or empty, fetching fresh airport data...');
-      
-      try {
-        airportsCache = await fetchAirportsFromAPI();
-        lastFetchTime = now;
-      } catch (error) {
-        console.error('📡 API fetch failed, using comprehensive static list');
-        airportsCache = getComprehensiveAirportList();
-        lastFetchTime = now;
-      }
+      console.log('🔄 Cache expired or empty, using comprehensive static list');
+      airportsCache = getComprehensiveAirportList();
+      lastFetchTime = now;
     }
 
-    // If no query, return top airports
+    // If no query, return top popular airports
     if (!query || query.length < 2) {
-      return airportsCache.slice(0, 15);
+      const popularAirports = [
+        'LHR', 'JFK', 'LAX', 'DXB', 'CDG', 'AMS', 'FRA', 'SIN', 'NRT', 'SYD',
+        'ORD', 'ATL', 'LGW', 'MUC', 'FCO', 'BKK', 'HKG', 'ICN', 'DEL', 'BOM'
+      ];
+      
+      const topAirports = popularAirports
+        .map(iata => airportsCache.find(airport => airport.iata === iata))
+        .filter(Boolean) as Airport[];
+      
+      return topAirports.slice(0, 15);
     }
     
-    const searchTerm = query.toLowerCase();
+    console.log(`🔍 Searching airports for: "${query}"`);
     
-    const filtered = airportsCache.filter(airport => 
-      airport.iata.toLowerCase().includes(searchTerm) ||
-      airport.name.toLowerCase().includes(searchTerm) ||
-      airport.city.toLowerCase().includes(searchTerm) ||
-      airport.country.toLowerCase().includes(searchTerm)
-    );
+    const searchTerm = normalizeSearchTerm(query);
+    
+    const filtered = airportsCache.filter(airport => {
+      // Check IATA code (exact match or starts with)
+      if (airport.iata.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+      
+      // Check city name (flexible matching)
+      if (searchTermMatches(searchTerm, airport.city)) {
+        return true;
+      }
+      
+      // Check airport name (flexible matching)
+      if (searchTermMatches(searchTerm, airport.name)) {
+        return true;
+      }
+      
+      // Check country (flexible matching)
+      if (searchTermMatches(searchTerm, airport.country)) {
+        return true;
+      }
+      
+      return false;
+    });
 
-    return filtered.slice(0, 30);
+    console.log(`✅ Found ${filtered.length} airports matching "${query}"`);
+    
+    // Sort results: exact matches first, then by city name
+    const sorted = filtered.sort((a, b) => {
+      const aCity = normalizeSearchTerm(a.city);
+      const bCity = normalizeSearchTerm(b.city);
+      const searchLower = searchTerm;
+      
+      // Exact city matches first
+      if (aCity === searchLower && bCity !== searchLower) return -1;
+      if (bCity === searchLower && aCity !== searchLower) return 1;
+      
+      // Then cities that start with the search term
+      if (aCity.startsWith(searchLower) && !bCity.startsWith(searchLower)) return -1;
+      if (bCity.startsWith(searchLower) && !aCity.startsWith(searchLower)) return 1;
+      
+      // Finally alphabetical by city name
+      return a.city.localeCompare(b.city);
+    });
+
+    return sorted.slice(0, 30);
   } catch (error) {
     console.error('❌ Search failed, using fallback airports:', error);
     return FALLBACK_AIRPORTS;

@@ -31,7 +31,9 @@ export const AirportSelector: React.FC<AirportSelectorProps> = ({
     const fetchAirports = async () => {
       setIsLoading(true);
       try {
+        console.log(`🔍 Searching for: "${searchQuery}"`);
         const results = await searchAirports(searchQuery);
+        console.log(`✅ Found ${results.length} airports`);
         setAirports(results);
       } catch (error) {
         console.error('Failed to search airports:', error);
@@ -108,7 +110,7 @@ export const AirportSelector: React.FC<AirportSelectorProps> = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0" align="start">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search by city name (e.g., New York, London, Dubai)..."
             value={searchQuery}
