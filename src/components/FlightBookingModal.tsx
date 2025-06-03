@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from '@/lib/utils';
@@ -12,6 +11,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { FlightRouteSection } from './flight-booking/FlightRouteSection';
 import { FlightPreferencesSection } from './flight-booking/FlightPreferencesSection';
 import { PersonalInfoSection } from './flight-booking/PersonalInfoSection';
+import BookingSuccessDialog from './flight-booking/BookingSuccessDialog';
 
 interface Airline {
   id: string;
@@ -32,6 +32,7 @@ const FlightBookingModal: React.FC<FlightBookingModalProps> = ({ isOpen, onClose
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [phoneValid, setPhoneValid] = useState(true);
   const [departureDate, setDepartureDate] = useState<Date>();
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -260,13 +261,9 @@ Additional Details: ${formData.flightDetails}
         console.log('📧 Email notifications are disabled');
       }
 
-      toast({
-        title: "Booking Request Submitted!",
-        description: "We've received your flight booking request. Our team will contact you within 2 hours with next steps.",
-      });
-
       resetForm();
       onClose();
+      setShowSuccessDialog(true);
 
     } catch (error) {
       console.error('Error submitting booking request:', error);
@@ -281,106 +278,114 @@ Additional Details: ${formData.flightDetails}
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn(
-        "w-full mx-auto p-0 overflow-hidden bg-white max-h-[90vh]",
-        isMobile 
-          ? "max-w-sm rounded-t-2xl sm:rounded-2xl" 
-          : "max-w-3xl rounded-2xl"
-      )}>
-        <div className="flex flex-col h-full max-h-[90vh]">
-          {/* Header */}
-          <div className={cn(
-            "flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0",
-            isMobile ? "p-4" : "p-6"
-          )}>
-            <div>
-              <DialogTitle className={cn(
-                "font-bold text-white",
-                isMobile ? "text-lg" : "text-2xl"
-              )}>
-                Book Your Flight
-              </DialogTitle>
-              {!isMobile && (
-                <p className="text-blue-100 text-sm mt-1">Find the perfect flight for your journey</p>
-              )}
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className={cn(
+          "w-full mx-auto p-0 overflow-hidden bg-white max-h-[90vh]",
+          isMobile 
+            ? "max-w-sm rounded-t-2xl sm:rounded-2xl" 
+            : "max-w-3xl rounded-2xl"
+        )}>
+          <div className="flex flex-col h-full max-h-[90vh]">
+            {/* Header */}
+            <div className={cn(
+              "flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0",
+              isMobile ? "p-4" : "p-6"
+            )}>
+              <div>
+                <DialogTitle className={cn(
+                  "font-bold text-white",
+                  isMobile ? "text-lg" : "text-2xl"
+                )}>
+                  Book Your Flight
+                </DialogTitle>
+                {!isMobile && (
+                  <p className="text-blue-100 text-sm mt-1">Find the perfect flight for your journey</p>
+                )}
+              </div>
+            </div>
+
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto">
+              <form onSubmit={handleSubmit} className={cn("space-y-6", isMobile ? "p-4" : "p-6")}>
+                {/* Flight Route Section */}
+                <FlightRouteSection
+                  fromAirport={formData.fromAirport}
+                  toAirport={formData.toAirport}
+                  departureDate={departureDate}
+                  onAirportChange={handleAirportChange}
+                  onDateChange={setDepartureDate}
+                  onSwapAirports={swapAirports}
+                />
+
+                {/* Flight Preferences */}
+                <FlightPreferencesSection
+                  airlines={airlines}
+                  airlineName={formData.airlineName}
+                  pointsRequired={formData.pointsRequired}
+                  flightDetails={formData.flightDetails}
+                  uploadedFile={uploadedFile}
+                  isLoadingAirlines={isLoadingAirlines}
+                  onSelectChange={handleSelectChange}
+                  onChange={handleChange}
+                  onFileChange={handleFileChange}
+                />
+
+                {/* Personal Information */}
+                <PersonalInfoSection
+                  firstName={formData.firstName}
+                  lastName={formData.lastName}
+                  email={formData.email}
+                  phone={formData.phone}
+                  countryCode={formData.countryCode}
+                  phoneValid={phoneValid}
+                  onChange={handleChange}
+                  onPhoneChange={handlePhoneChange}
+                />
+              </form>
+            </div>
+
+            {/* Footer */}
+            <div className={cn("border-t border-gray-100 bg-gray-50 flex-shrink-0", isMobile ? "p-4" : "p-6")}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget.closest('div')?.parentElement?.querySelector('form') as HTMLFormElement;
+                  form?.requestSubmit();
+                }}
+                className={cn(
+                  "w-full font-semibold transition-all duration-200 rounded-lg",
+                  isMobile ? "h-12 text-base" : "h-14 text-lg",
+                  (isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate) 
+                    ? "bg-gray-300 text-gray-500" 
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl"
+                )}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Submitting...
+                  </div>
+                ) : (
+                  "Submit Booking Request"
+                )}
+              </Button>
+              <p className="text-xs text-gray-500 text-center mt-2">
+                We'll contact you within 2 hours with your quote.
+              </p>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
 
-          {/* Content - Scrollable */}
-          <div className="flex-1 overflow-y-auto">
-            <form onSubmit={handleSubmit} className={cn("space-y-6", isMobile ? "p-4" : "p-6")}>
-              {/* Flight Route Section */}
-              <FlightRouteSection
-                fromAirport={formData.fromAirport}
-                toAirport={formData.toAirport}
-                departureDate={departureDate}
-                onAirportChange={handleAirportChange}
-                onDateChange={setDepartureDate}
-                onSwapAirports={swapAirports}
-              />
-
-              {/* Flight Preferences */}
-              <FlightPreferencesSection
-                airlines={airlines}
-                airlineName={formData.airlineName}
-                pointsRequired={formData.pointsRequired}
-                flightDetails={formData.flightDetails}
-                uploadedFile={uploadedFile}
-                isLoadingAirlines={isLoadingAirlines}
-                onSelectChange={handleSelectChange}
-                onChange={handleChange}
-                onFileChange={handleFileChange}
-              />
-
-              {/* Personal Information */}
-              <PersonalInfoSection
-                firstName={formData.firstName}
-                lastName={formData.lastName}
-                email={formData.email}
-                phone={formData.phone}
-                countryCode={formData.countryCode}
-                phoneValid={phoneValid}
-                onChange={handleChange}
-                onPhoneChange={handlePhoneChange}
-              />
-            </form>
-          </div>
-
-          {/* Footer */}
-          <div className={cn("border-t border-gray-100 bg-gray-50 flex-shrink-0", isMobile ? "p-4" : "p-6")}>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate}
-              onClick={(e) => {
-                e.preventDefault();
-                const form = e.currentTarget.closest('div')?.parentElement?.querySelector('form') as HTMLFormElement;
-                form?.requestSubmit();
-              }}
-              className={cn(
-                "w-full font-semibold transition-all duration-200 rounded-lg",
-                isMobile ? "h-12 text-base" : "h-14 text-lg",
-                (isSubmitting || !phoneValid || isLoadingAirlines || !formData.fromAirport || !formData.toAirport || !departureDate) 
-                  ? "bg-gray-300 text-gray-500" 
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl"
-              )}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Submitting...
-                </div>
-              ) : (
-                "Submit Booking Request"
-              )}
-            </Button>
-            <p className="text-xs text-gray-500 text-center mt-2">
-              We'll contact you within 2 hours with your quote.
-            </p>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+      {/* Success Dialog */}
+      <BookingSuccessDialog
+        isOpen={showSuccessDialog}
+        onClose={() => setShowSuccessDialog(false)}
+      />
+    </>
   );
 };
 
