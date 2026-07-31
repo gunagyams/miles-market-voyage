@@ -46,31 +46,32 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-navy text-white pt-12 pb-6">
+    <footer className="bg-navy text-white pt-8 pb-5">
       <div className="container-custom px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-2">
-            <div className="flex items-center mb-4">
-              <div className="flex items-center py-3 bg-navy">
+            <div className="flex items-center mb-2">
+              <div className="flex items-center bg-navy">
                 <img
                   src="/lovable-uploads/f6aff015-3335-42a4-a11e-3dfdebc022e9.png"
-                  className="w-[160px] h-auto max-h-[60px]"
+                  className="w-[120px] h-auto max-h-[44px]"
                   alt="Cash My Points Logo"
                 />
               </div>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-300 text-sm mb-3 max-w-md">
               Elevate your journey without the hefty price tag. Experience
               first-class travel for a fraction of the cost.
             </p>
             <div className="flex space-x-4">
+
               <a
                 href="#"
                 className="text-white hover:text-gold transition-colors duration-200"
               >
                 <span className="sr-only">Facebook</span>
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
@@ -88,7 +89,7 @@ const Footer = () => {
               >
                 <span className="sr-only">Instagram</span>
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
@@ -106,7 +107,7 @@ const Footer = () => {
               >
                 <span className="sr-only">Twitter</span>
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
@@ -210,7 +211,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-gray-800">
+        <div className="mt-8 pt-4 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
               &copy; {currentYear} Cash My Points. All rights reserved.
