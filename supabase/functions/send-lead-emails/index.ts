@@ -1,6 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { getEmailSettings } from "../_shared/emailSettings.ts";
+
 
 // Initialize Resend with the API key from environment variables
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
@@ -36,7 +38,12 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const payload: LeadEmailRequest = await req.json();
-    const { firstName, lastName, email, phone, airline, miles, estimatedTotal, adminEmails, notificationsEnabled } = payload;
+    // Never trust client-supplied recipients/settings — load them server-side.
+    const settings = await getEmailSettings();
+    const adminEmails = settings.adminEmails;
+    const notificationsEnabled = settings.notificationsEnabled;
+    const { firstName, lastName, email, phone, airline, miles, estimatedTotal } = payload;
+
     
     console.log("Received lead email request with data:", payload);
     console.log("Resend API key configured:", resendApiKey ? "Yes" : "No");

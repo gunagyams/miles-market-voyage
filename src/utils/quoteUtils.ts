@@ -28,37 +28,15 @@ export const fetchAirlines = async (): Promise<Airline[]> => {
   }
 };
 
+// Admin notification settings are resolved server-side in the edge function
+// (they contain admin email addresses and must not be exposed to the browser).
 export const fetchEmailSettings = async (): Promise<EmailSettings> => {
-  try {
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('value')
-      .eq('id', 'email_settings')
-      .maybeSingle();
-    
-    if (error) throw error;
-    
-    // Safely convert the JSON data to EmailSettings
-    if (data && data.value) {
-      const settingsValue = data.value as Record<string, any>;
-      return {
-        notifications_enabled: settingsValue.notifications_enabled ?? true,
-        admin_emails: Array.isArray(settingsValue.admin_emails) ? settingsValue.admin_emails : [],
-      };
-    }
-    
-    return {
-      notifications_enabled: true,
-      admin_emails: [],
-    };
-  } catch (error) {
-    console.error('Error fetching email settings:', error);
-    return {
-      notifications_enabled: true,
-      admin_emails: [],
-    };
-  }
+  return {
+    notifications_enabled: true,
+    admin_emails: [],
+  };
 };
+
 
 export const calculateEstimatedTotal = (
   miles: number,
