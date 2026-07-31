@@ -46,24 +46,25 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-navy text-white pt-12 pb-6">
+    <footer className="bg-navy text-white pt-8 pb-5">
       <div className="container-custom px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="md:col-span-2">
-            <div className="flex items-center mb-4">
-              <div className="flex items-center py-3 bg-navy">
+            <div className="flex items-center mb-2">
+              <div className="flex items-center bg-navy">
                 <img
                   src="/lovable-uploads/f6aff015-3335-42a4-a11e-3dfdebc022e9.png"
-                  className="w-[160px] h-auto max-h-[60px]"
+                  className="w-[120px] h-auto max-h-[44px]"
                   alt="Cash My Points Logo"
                 />
               </div>
             </div>
-            <p className="text-gray-300 mb-4">
+            <p className="text-gray-300 text-sm mb-3 max-w-md">
               Elevate your journey without the hefty price tag. Experience
               first-class travel for a fraction of the cost.
             </p>
             <div className="flex space-x-4">
+
               <a
                 href="#"
                 className="text-white hover:text-gold transition-colors duration-200"
