@@ -1,6 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { getEmailSettings } from "../_shared/emailSettings.ts";
+
 
 // Initialize Resend with the API key from environment variables
 const resendApiKey = Deno.env.get("RESEND_API_KEY");
@@ -188,6 +190,11 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const payload: BookingEmailRequest = await req.json();
     console.log("Received payload:", JSON.stringify(payload, null, 2));
+
+    // Never trust client-supplied recipients/settings — load them server-side.
+    const settings = await getEmailSettings();
+    payload.adminEmails = settings.adminEmails;
+    payload.notificationsEnabled = settings.notificationsEnabled;
     
     if (!resendApiKey) {
       console.error("RESEND_API_KEY not found in environment");
@@ -214,6 +221,7 @@ const handler = async (req: Request): Promise<Response> => {
         }
       );
     }
+
 
     let successCount = 0;
     let errors = [];
